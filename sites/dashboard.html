@@ -313,7 +313,6 @@
       <button id="logoutBtn" class="btn logout">Ausloggen</button>
       <button id="emailBtn" class="btn">E-Mail ändern</button>
       <button id="passwordBtn" class="btn">Passwort ändern</button>
-      <button id="verifyEmailBtn" class="btn success hidden">E-Mail verifizieren</button>
     </div>
 
     <div id="emailChange" class="change-group hidden">
@@ -368,7 +367,6 @@
     const overlayLoading = document.getElementById('overlayLoading');
     const messageContainer = document.getElementById('messageContainer');
     const verificationStatus = document.getElementById('verificationStatus');
-    const verifyEmailBtn = document.getElementById('verifyEmailBtn');
 
     // Redirect to login if not authenticated
     let authChecked = false;
@@ -410,7 +408,7 @@
         
         overlayLoading.classList.add('hidden');
         showOverlay('Verifikations-E-Mail gesendet!', true);
-        setTimeout(hideOverlay, 3000);
+        // Banner bleibt sichtbar bis zur Verifikation oder Reload
       } catch (error) {
         overlayLoading.classList.add('hidden');
         showMessage('Fehler beim Senden der Verifikations-E-Mail: ' + error.message);
@@ -428,13 +426,13 @@
       verificationStatus.textContent = isVerified ? 'E-Mail verifiziert ✓' : 'E-Mail nicht verifiziert';
       verificationStatus.className = `verification-status ${isVerified ? 'verified' : 'unverified'}`;
       
-      // Show/hide verification elements
-      if (!isVerified) {
+      // Show overlay only for email/password users who are not verified
+      const isEmailPasswordUser = user.providerData.some(provider => provider.providerId === 'password');
+      
+      if (!isVerified && isEmailPasswordUser) {
         showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)');
-        verifyEmailBtn.classList.remove('hidden');
       } else {
         hideOverlay();
-        verifyEmailBtn.classList.add('hidden');
       }
     };
 
@@ -452,9 +450,12 @@
       try {
         await reload(user);
         updateUserStatus(auth.currentUser);
+        // Initialize lastVerificationStatus after first load
+        lastVerificationStatus = auth.currentUser.emailVerified;
       } catch (error) {
         console.error('Error reloading user:', error);
         updateUserStatus(user);
+        lastVerificationStatus = user.emailVerified;
       }
     });
 
@@ -611,14 +612,27 @@
     };
 
     // Check verification status periodically
+    let lastVerificationStatus = null;
+    
     setInterval(async () => {
       if (auth.currentUser && !auth.currentUser.emailVerified) {
         try {
           await reload(auth.currentUser);
-          if (auth.currentUser.emailVerified) {
+          const currentVerificationStatus = auth.currentUser.emailVerified;
+          
+          // Check if verification status changed from false to true
+          if (lastVerificationStatus === false && currentVerificationStatus === true) {
+            // Show success banner
+            showOverlay('E-Mail erfolgreich verifiziert!', true);
             updateUserStatus(auth.currentUser);
-            showMessage('E-Mail-Adresse erfolgreich verifiziert!', 'success');
+            
+            // Hide banner after 8 seconds
+            setTimeout(() => {
+              hideOverlay();
+            }, 8000);
           }
+          
+          lastVerificationStatus = currentVerificationStatus;
         } catch (error) {
           // Ignore errors in background check
         }
