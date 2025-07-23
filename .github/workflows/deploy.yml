@@ -8,10 +8,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      # → Verzeichnis public/ anlegen, falls es noch fehlt
+      - name: Prepare public directory
+        run: mkdir -p public
 
       - name: Generate config.js from Secret
         run: |
