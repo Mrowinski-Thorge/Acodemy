@@ -3,14 +3,95 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Acodemy | Dashboard</title>
+  <title>Codegame | Dashboard</title>
 
   <!-- Inter & Material Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 
   <style>
-    /* Das Design ist analog zum Login-Screen, nur das Dashboard zeigt den Content nach Login */
+    /* Dashboard Style */
+    :root {
+      --bg-primary: #fff;
+      --bg-secondary: #f8fafc;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --shadow: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.1);
+      --radius: 1rem;
+    }
+
+    .panel {
+      max-width: 400px;
+      width: 90%;
+      margin: 10px auto 20px;
+      padding: 1rem 1.5rem 2rem;
+      background: var(--bg-primary);
+      border: 4px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo-container {
+      margin-bottom: -1rem;
+      text-align: center;
+    }
+
+    .logo-container img {
+      max-height: 110px;
+      width: auto;
+      display: inline-block;
+      transition: var(--transition);
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      color: var(--text-primary);
+      margin-bottom: .75rem;
+    }
+
+    .btn-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      margin-top: 1rem;
+    }
+
+    .btn {
+      padding: .75rem;
+      width: 100%;
+      border: 4px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 1.125rem;
+      cursor: pointer;
+      transition: all 0.3s ease-out;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .btn.logout {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn.logout:hover {
+      background: var(--accent-hover);
+    }
+
+    .change-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      margin-top: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -18,13 +99,13 @@
     <div class="logo-container">
       <img src="assets/images/logo.png" alt="Codegame Logo">
     </div>
-    <h2>Willkommen bei Acodemy!</h2>
+    <h2>Willkommen bei Codegame!</h2>
     <p>Angemeldet als <strong id="userEmail"></strong></p>
 
     <div class="btn-group">
       <button id="logoutBtn" class="btn logout">Ausloggen</button>
-      <button id="emailBtn" class="btn secondary">E-Mail ändern</button>
-      <button id="passwordBtn" class="btn secondary">Passwort ändern</button>
+      <button id="emailBtn" class="btn">E-Mail ändern</button>
+      <button id="passwordBtn" class="btn">Passwort ändern</button>
     </div>
 
     <div id="emailChange" class="change-group hidden">
@@ -40,9 +121,9 @@
 
   <script type="module">
     import { getAuth, onAuthStateChanged, signOut, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-    
+
     const auth = getAuth();
-    
+
     onAuthStateChanged(auth, user => {
       if (user) {
         document.getElementById('userEmail').textContent = user.email;
@@ -51,28 +132,37 @@
       }
     });
 
-    document.getElementById('logoutBtn').onclick = async () => {
-      await signOut(auth);
-      window.location.href = 'login.html'; // Redirect to login page on logout
+    document.getElementById('logoutBtn').onclick = () => signOut(auth);
+
+    document.getElementById('emailBtn').onclick = () => {
+      document.getElementById('passwordChange').classList.add('hidden');
+      document.getElementById('emailChange').classList.toggle('hidden');
+    };
+
+    document.getElementById('passwordBtn').onclick = () => {
+      document.getElementById('emailChange').classList.add('hidden');
+      document.getElementById('passwordChange').classList.toggle('hidden');
     };
 
     document.getElementById('saveEmailBtn').onclick = async () => {
-      const newEmail = document.getElementById('newEmail').value.trim();
-      if (newEmail) {
+      const newEmail = document.getElementById('newEmail').value;
+      try {
         await updateEmail(auth.currentUser, newEmail);
-        alert('E-Mail erfolgreich geändert');
-      } else {
-        alert('Bitte neue E-Mail eingeben');
+        alert('E-Mail erfolgreich geändert!');
+        document.getElementById('emailChange').classList.add('hidden');
+      } catch (error) {
+        alert('Fehler beim Ändern der E-Mail: ' + error.message);
       }
     };
 
     document.getElementById('savePasswordBtn').onclick = async () => {
-      const newPassword = document.getElementById('newPassword').value.trim();
-      if (newPassword) {
+      const newPassword = document.getElementById('newPassword').value;
+      try {
         await updatePassword(auth.currentUser, newPassword);
-        alert('Passwort erfolgreich geändert');
-      } else {
-        alert('Bitte neues Passwort eingeben');
+        alert('Passwort erfolgreich geändert!');
+        document.getElementById('passwordChange').classList.add('hidden');
+      } catch (error) {
+        alert('Fehler beim Ändern des Passworts: ' + error.message);
       }
     };
   </script>
