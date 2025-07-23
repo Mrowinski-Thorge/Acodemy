@@ -1,92 +1,130 @@
 <!DOCTYPE html>
 <html lang="de" data-theme="light">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Acodemy | Login</title>
 
-  <!-- Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <!-- Inter & Material Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 
   <style>
     :root {
       --bg-primary:#fff; --bg-secondary:#f8fafc;
       --text-primary:#1e293b; --text-secondary:#64748b;
       --border:#e2e8f0; --accent:#3b82f6; --accent-hover:#2563eb;
-      --shadow:0 10px 15px rgba(0,0,0,.1),0 4px 6px rgba(0,0,0,.1);
+      --shadow:0 10px 15px rgba(0,0,0,0.1),0 4px 6px rgba(0,0,0,0.1);
       --radius:1rem; --bw:4px; --fs-input:1.125rem; --fs-btn:1.125rem;
     }
-    *,*::before,*::after{box-sizing:border-box} html,body{height:100%}
-    body{margin:0;background:var(--bg-secondary);font-family:Inter,sans-serif}
+    *,*::before,*::after {box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;background:var(--bg-secondary);font-family:'Inter',sans-serif}
     .hidden{display:none!important}
     .panel{
-      max-width:400px;width:92%;margin:16px auto;
-      padding:1rem 1.5rem 2rem;background:var(--bg-primary);
-      border:var(--bw) solid var(--border);border-radius:var(--radius);
-      box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center
+      max-width:400px;width:92%;margin:20px auto;
+      padding:1.5rem 2rem;background:var(--bg-primary);
+      border:var(--bw) solid var(--border);
+      border-radius:var(--radius);box-shadow:var(--shadow);
+      display:flex;flex-direction:column;align-items:center;
+    }
+    /* Overlay für Verifikation */
+    #verificationOverlay{
+      position:fixed;top:0;left:0;width:100%;
+      background:#fff3cd;color:#856404;
+      text-align:center;padding:.75rem;
+      font-size:.95rem;cursor:pointer;z-index:1000;display:none;
+    }
+    #verificationOverlay.success{
+      background:#d4edda;color:#155724;
     }
     .logo-container{margin-bottom:1rem;text-align:center}
-    /* Logo skaliert jetzt sauber auf 160 px Höhe */
-    .logo-container img{height:160px;width:auto;display:inline-block}
-    h2{margin:.75rem 0 1rem;font-size:1.75rem;color:var(--text-primary)}
+    /* Logo-Höhe wieder 110px */
+    .logo-container img{height:110px;width:auto;display:inline-block}
+    h2{margin:.5rem 0 1rem;font-size:1.75rem;color:var(--text-primary)}
     .auth-form{width:100%;display:flex;flex-direction:column;gap:.75rem;margin-bottom:.75rem}
     .form-input{
       font-size:var(--fs-input);padding:.75rem 1rem;
-      border:var(--bw) solid var(--border);border-radius:var(--radius);
-      background:var(--bg-secondary);color:var(--text-primary)
+      border:var(--bw) solid var(--border);
+      border-radius:var(--radius);background:var(--bg-secondary);
+      color:var(--text-primary);
     }
-    .pwd-wrapper{position:relative}.pwd-wrapper input{padding-right:4rem}
+    .pwd-wrapper{position:relative}
+    .pwd-wrapper input{padding-right:4rem}
     .pwd-toggle{
-      position:absolute;top:50%;right:1rem;transform:translateY(-50%);
-      border:none;background:none;font-size:.85rem;color:var(--accent);cursor:pointer}
+      position:absolute;top:50%;right:1rem;
+      transform:translateY(-50%);border:none;background:none;
+      font-size:.85rem;color:var(--accent);cursor:pointer;
+    }
+    .forgot-link{
+      font-size:.85rem;color:var(--accent);
+      margin:-.5rem 0 1rem;text-align:center;
+    }
     .primary-btn{
-      font-size:var(--fs-btn);padding:.75rem;border:none;width:100%;
-      background:var(--accent);color:#fff;border-radius:var(--radius);cursor:pointer}
+      width:100%;padding:.75rem;
+      background:var(--accent);color:#fff;border:none;
+      border-radius:var(--radius);font-size:var(--fs-btn);
+      cursor:pointer;
+    }
     .primary-btn:hover{background:var(--accent-hover)}
-    .separator{width:100%;text-align:center;position:relative;margin:.75rem 0;color:var(--text-secondary)}
-    .separator::before,.separator::after{
-      content:"";position:absolute;top:50%;width:40%;height:1px;background:var(--border)}
-    .separator::before{left:0}.separator::after{right:0}
-    .separator span{background:var(--bg-primary);padding:0 .5rem}
+    .separator{
+      width:100%;text-align:center;position:relative;
+      margin:1rem 0;color:var(--text-secondary);
+    }
+    .separator::before,
+    .separator::after{
+      content:"";position:absolute;top:50%;width:40%;height:1px;
+      background:var(--border);
+    }
+    .separator::before{left:0}
+    .separator::after{right:0}
+    .separator span{
+      background:var(--bg-primary);padding:0 .5rem;
+    }
     .social-btns{width:100%;display:flex;flex-direction:column;gap:.75rem}
     .social-btn{
-      display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;width:100%;
-      border:var(--bw) solid var(--border);border-radius:var(--radius);cursor:pointer}
+      display:flex;align-items:center;gap:.75rem;padding:.75rem;
+      width:100%;border:var(--bw) solid var(--border);
+      border-radius:var(--radius);cursor:pointer;
+    }
     .social-btn.google{border-color:#4285f4;color:#4285f4}
     .social-btn.google:hover{background:#4285f4;color:#fff}
     .social-btn.github{border-color:#333;color:#333}
     .social-btn.github:hover{background:#333;color:#fff}
     .icon{width:24px;height:24px;background-size:contain;background-position:center}
-    .google-icon{background-image:url("https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg")}
-    .github-icon{background-image:url("https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png")}
-    .form-switch-text{font-size:.9rem;color:var(--text-secondary);margin-top:.5rem;text-align:center}
-    .form-switch-text a{color:var(--accent);text-decoration:none;font-weight:600;margin:0 .3rem}
+    .google-icon{
+      background-image:url("https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg");
+    }
+    .github-icon{
+      background-image:url("https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png");
+    }
+    .form-switch-text{
+      font-size:.9rem;color:var(--text-secondary);margin-top:.75rem;
+    }
+    .form-switch-text a{
+      color:var(--accent);text-decoration:none;font-weight:500;margin:0 .5rem;
+    }
   </style>
 </head>
 <body>
+  <div id="verificationOverlay">Ihre E-Mail-Adresse muss verifiziert werden</div>
 
-  <div class="panel">
+  <div id="loginPanel" class="panel">
     <div class="logo-container">
-      <!-- Remote-Logo, immer verfügbar -->
-      <img src="https://raw.githubusercontent.com/Mrowinski-Thorge/Codegame/main/assets/images/logo.png" alt="Acodemy Logo" />
+      <img src="../assets/images/logo.png" alt="Acodemy Logo"/>
     </div>
 
     <h2 id="formTitle">Anmelden</h2>
-
-    <!-- Auth-Formular -->
     <form id="authForm" class="auth-form">
-      <input type="email" id="email" class="form-input" placeholder="E-Mail" required />
+      <input type="email" id="email" class="form-input" placeholder="E-Mail" required/>
       <div class="pwd-wrapper">
-        <input type="password" id="password" class="form-input" placeholder="Passwort" required />
+        <input type="password" id="password" class="form-input" placeholder="Passwort" required/>
         <button type="button" id="togglePassword" class="pwd-toggle">Anzeigen</button>
       </div>
-      <a href="#" id="forgotPassword" style="font-size:.85rem;color:var(--accent);text-align:center">Passwort vergessen?</a>
+      <a href="#" id="forgotPassword" class="forgot-link">Passwort vergessen?</a>
       <button type="submit" id="submitBtn" class="primary-btn">Anmelden</button>
     </form>
 
     <div class="separator"><span>ODER</span></div>
-
     <div class="social-btns">
       <button id="googleLogin" class="social-btn google">
         <div class="icon google-icon"></div>Mit Google anmelden
@@ -97,14 +135,13 @@
     </div>
 
     <p class="form-switch-text">
-      <span id="textLogin">Noch kein Konto?</span>
+      <span id="loginPrompt">Noch kein Konto?</span>
       <a href="#" id="toggleSignup">Registrieren</a>
-      <span id="textRegister" class="hidden">Bereits registriert?</span>
+      <span id="registerPrompt" class="hidden">Bereits registriert?</span>
       <a href="#" id="toggleSignin" class="hidden">Anmelden</a>
     </p>
   </div>
 
-  <!-- Firebase-Konfiguration (wird von CI generiert) -->
   <script src="../config.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
@@ -114,30 +151,47 @@
       sendPasswordResetEmail, onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-    /* ---------- Initialisierung ---------- */
+    // Initialisierung
     const app  = initializeApp(window.firebaseConfig);
     const auth = getAuth(app);
 
-    /* ---------- Provider ---------- */
+    // Provider
     const googleProvider = new GoogleAuthProvider();
     const githubProvider = new GithubAuthProvider();
     githubProvider.addScope('user:email');
 
-    /* ---------- UI-Toggle ---------- */
+    // Overlay
+    const overlay = document.getElementById('verificationOverlay');
+    function showOverlay(text, success=false) {
+      overlay.textContent = text;
+      overlay.classList.toggle('success', success);
+      overlay.style.display = 'block';
+    }
+    overlay.onclick = async () => {
+      try {
+        await auth.currentUser.sendEmailVerification();
+        showOverlay('Verifizierungs-Mail gesendet', true);
+        setTimeout(() => overlay.style.display='none', 3000);
+      } catch(e) {
+        alert('Fehler beim Senden:\n'+e.message);
+      }
+    };
+
+    // Toggle Sign-In/Sign-Up
     let signup = false;
     const toggleUI = () => {
       document.getElementById('formTitle').textContent   = signup ? 'Registrieren' : 'Anmelden';
       document.getElementById('submitBtn').textContent   = signup ? 'Registrieren' : 'Anmelden';
-      document.getElementById('textLogin' ).classList.toggle('hidden', signup);
+      document.getElementById('loginPrompt').classList.toggle('hidden', signup);
       document.getElementById('toggleSignup').classList.toggle('hidden', signup);
-      document.getElementById('textRegister').classList.toggle('hidden', !signup);
+      document.getElementById('registerPrompt').classList.toggle('hidden', !signup);
       document.getElementById('toggleSignin').classList.toggle('hidden', !signup);
     };
-    document.getElementById('toggleSignup').onclick = e => { e.preventDefault(); signup = true;  toggleUI(); };
-    document.getElementById('toggleSignin').onclick = e => { e.preventDefault(); signup = false; toggleUI(); };
+    document.getElementById('toggleSignup').onclick = e => { e.preventDefault(); signup=true;  toggleUI(); };
+    document.getElementById('toggleSignin').onclick = e => { e.preventDefault(); signup=false; toggleUI(); };
     toggleUI();
 
-    /* ---------- Auth-Form ---------- */
+    // Auth-Formular
     document.getElementById('authForm').onsubmit = async e => {
       e.preventDefault();
       const email = e.target.email.value.trim();
@@ -148,33 +202,48 @@
       } catch(err){ alert(err.message); }
     };
 
-    /* ---------- Social ---------- */
+    // Social-Login
     document.getElementById('googleLogin').onclick = () =>
-      signInWithPopup(auth, googleProvider).catch(err => alert(err.message));
+      signInWithPopup(auth, googleProvider).catch(err=>alert(err.message));
     document.getElementById('githubLogin').onclick = () =>
-      signInWithPopup(auth, githubProvider).catch(err => alert(err.message));
+      signInWithPopup(auth, githubProvider).catch(err=>alert(err.message));
 
-    /* ---------- Passwort-Toggle ---------- */
+    // Passwort anzeigen/verbergen
     document.getElementById('togglePassword').onclick = () => {
-      const pw = document.getElementById('password');
-      const b  = document.getElementById('togglePassword');
-      if (pw.type === 'password'){ pw.type='text';  b.textContent='Verbergen'; }
-      else                       { pw.type='password'; b.textContent='Anzeigen'; }
+      const pw = document.getElementById('password'), b = document.getElementById('togglePassword');
+      if (pw.type==='password'){ pw.type='text'; b.textContent='Verbergen'; }
+      else                      { pw.type='password'; b.textContent='Anzeigen'; }
     };
 
-    /* ---------- Forgot-Password ---------- */
+    // Passwort zurücksetzen
     document.getElementById('forgotPassword').onclick = async e => {
       e.preventDefault();
       const mail = document.getElementById('email').value.trim();
       if (!mail) return alert('Bitte E-Mail angeben');
-      try{ await sendPasswordResetEmail(auth,mail); alert('Reset-Mail gesendet'); }
-      catch(err){ alert(err.message); }
+      try { await sendPasswordResetEmail(auth,mail); alert('Reset-Mail gesendet'); }
+      catch(e){ alert(e.message); }
     };
 
-    /* ---------- Redirect wenn eingeloggt ---------- */
+    // E-Mail-Verifikation & Redirect
+    let intervalId;
     onAuthStateChanged(auth, user => {
-      if (user && user.emailVerified){
-        window.location.href = 'dashboard.html';
+      if (user) {
+        if (user.emailVerified) {
+          clearInterval(intervalId);
+          window.location.href = 'dashboard.html';
+        } else {
+          showOverlay('Bitte verifiziere Deine E-Mail-Adresse');
+          intervalId = setInterval(async () => {
+            await user.reload();
+            if (user.emailVerified) {
+              clearInterval(intervalId);
+              showOverlay('E-Mail verifiziert!', true);
+            }
+          }, 3000);
+        }
+      } else {
+        clearInterval(intervalId);
+        overlay.style.display = 'none';
       }
     });
   </script>
