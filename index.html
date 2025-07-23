@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Codegame – Auth & Dashboard</title>
 
-  <!-- Inter Font & Material Icons -->
+  <!-- Inter & Material Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 
@@ -20,7 +20,7 @@
       --accent-hover: #2563eb;
       --shadow: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.1);
       --radius: 1rem;
-      --bw: 3px;
+      --bw: 4px;            /* dickerer Border */
       --fs-input: 1.125rem;
       --fs-btn: 1.125rem;
       --transition: all .3s ease-out;
@@ -44,29 +44,16 @@
       transition:var(--transition);
     }
 
-    /* -------- Logo-Clipping im Login -------- */
-    .login-logo {
-      position:relative;
-      width:auto;
-      height:300px;        /* sichtbarer Ausschnitt */
-      overflow:hidden;     /* transparenten Rand verbergen */
+    /* Einfacher Logo-Container */
+    .logo-container {
       margin-bottom:1rem;
+      text-align:center;
     }
-    .login-logo img {
-      position:absolute;
-      top:-20px;           /* transparenten Rand oben ausblenden */
-      left:50%;
-      transform:translateX(-50%);
-      max-height:calc(300px + 40px); /* Puffer für Rand */
-      width:auto;
-      transition:var(--transition);
-    }
-    /* -------- volles Logo im Dashboard -------- */
-    #mainScreen .logo-container img {
+    .logo-container img {
       max-height:180px;
-      position:static!important;
-      transform:none!important;
-      margin-bottom:1rem;
+      width:auto;
+      display:inline-block;
+      transition:var(--transition);
     }
 
     /* Überschrift */
@@ -100,7 +87,7 @@
       position:relative;
     }
     .pwd-wrapper input {
-      padding-right:3.5rem;
+      padding-right:4rem; /* Platz für Button */
     }
     .pwd-toggle {
       position:absolute;
@@ -270,7 +257,7 @@
 
   <!-- LOGIN SCREEN -->
   <div id="loginScreen" class="panel">
-    <div class="login-logo">
+    <div class="logo-container">
       <img src="assets/images/logo.png" alt="Codegame Logo">
     </div>
     <h2 id="formTitle">Anmelden</h2>
@@ -350,7 +337,7 @@
     getAnalytics(app);
     const auth = getAuth(app);
 
-    // 2) Social-Provider anlegen
+    // 2) Social-Provider
     const googleProvider = new GoogleAuthProvider();
     const githubProvider = new GithubAuthProvider();
     githubProvider.addScope('user:email');
