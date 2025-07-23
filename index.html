@@ -275,7 +275,7 @@
   <!-- Login Screen -->
   <div id="loginScreen" class="login-container">
     <div class="logo-container">
-      <img src="https://example.com/logo.png" alt="Codegame Logo">
+      <img src="assets/images/logo.png" alt="Codegame Logo">
     </div>
     <h2 id="formTitle">Anmelden</h2>
     <p class="form-switch-text">
@@ -309,7 +309,7 @@
   <!-- Main Screen -->
   <div id="mainScreen" class="main-screen hidden">
     <div class="logo-container">
-      <img src="https://example.com/logo.png" alt="Codegame Logo">
+      <img src="assets/images/logo.png" alt="Codegame Logo">
     </div>
     <h2>Willkommen bei Codegame!</h2>
     <p>Erfolgreich eingeloggt als <strong id="userEmail"></strong>.</p>
@@ -367,7 +367,7 @@
     const emailChangeGrp  = document.getElementById('emailChange');
     const passwordChangeG = document.getElementById('passwordChange');
 
-    // Toggle Login/Registrieren
+    // Toggle Anmelden/Registrieren
     let isSignup = false;
     function updateToggleUI() {
       document.getElementById('loginPrompt').classList.toggle('hidden', isSignup);
@@ -381,7 +381,7 @@
     document.getElementById('toggleSignin').onclick = e => { e.preventDefault(); isSignup=false; updateToggleUI(); };
     updateToggleUI();
 
-    // Social-Provider
+    // Social-Provider einrichten
     const googleProvider = new GoogleAuthProvider();
     const githubProvider = new GithubAuthProvider();
     githubProvider.addScope('user:email');
@@ -408,7 +408,7 @@
       }
     };
 
-    // Passwort-Anzeigen
+    // Passwort zeigen/verbergen
     document.getElementById('togglePassword').onclick = () => {
       const pw  = document.getElementById('password');
       const btn = document.getElementById('togglePassword');
@@ -429,7 +429,7 @@
       }
     };
 
-    // Auth-State
+    // Auth-Status beobachten
     onAuthStateChanged(auth, user => {
       if (user) {
         loginScreen.classList.add('hidden');
@@ -447,10 +447,10 @@
     document.getElementById('logoutBtn').onclick   = () => signOut(auth);
     document.getElementById('emailBtn').onclick    = () => {
       passwordChangeG.classList.add('hidden');
-      emailChangeGrp .classList.toggle('hidden');
+      emailChangeGrp.classList.toggle('hidden');
     };
     document.getElementById('passwordBtn').onclick = () => {
-      emailChangeGrp .classList.add('hidden');
+      emailChangeGrp.classList.add('hidden');
       passwordChangeG.classList.toggle('hidden');
     };
     document.getElementById('saveEmailBtn').onclick = async () => {
