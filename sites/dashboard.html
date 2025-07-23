@@ -1,111 +1,79 @@
 <!DOCTYPE html>
-<html lang="de" data-theme="light">
+<html lang="de">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Acodemy | Dashboard</title>
+
+  <!-- Inter & Material Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+
   <style>
-    :root{
-      --bg-primary:#fff; --bg-secondary:#f8fafc;
-      --text-primary:#1e293b; --text-secondary:#64748b;
-      --border:#e2e8f0; --accent:#3b82f6; --accent-hover:#2563eb;
-      --shadow:0 10px 15px rgba(0,0,0,0.1);
-      --radius:1rem; --bw:4px; --fs-input:1.125rem; --fs-btn:1.125rem;
-    }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%;background:var(--bg-secondary);font-family:'Inter',sans-serif}
-    .panel{
-      max-width:400px;width:92%;margin:20px auto;
-      padding:1.5rem 2rem;background:var(--bg-primary);
-      border:var(--bw) solid var(--border);
-      border-radius:var(--radius);box-shadow:var(--shadow);
-      display:flex;flex-direction:column;align-items:center;
-    }
-    .logo-container{margin-bottom:1rem;text-align:center}
-    /* Logo-Höhe 110px */
-    .logo-container img{height:110px;width:auto;display:inline-block}
-    h2{margin:.5rem 0;font-size:1.75rem;color:var(--text-primary)}
-    p{color:var(--text-secondary);margin-bottom:1rem}
-    .btn{
-      width:100%;padding:.75rem;margin-bottom:.75rem;
-      border:var(--bw) solid var(--border);
-      border-radius:var(--radius);background:var(--bg-secondary);
-      font-size:var(--fs-btn);cursor:pointer;
-    }
-    .btn.logout{
-      background:var(--accent);border-color:var(--accent);color:#fff;
-    }
-    .btn.logout:hover{background:var(--accent-hover)}
-    .input{
-      width:100%;padding:.75rem 1rem;margin-bottom:.75rem;
-      border:var(--bw) solid var(--border);
-      border-radius:var(--radius);background:var(--bg-secondary);
-      font-size:var(--fs-input);
-    }
+    /* Das Design ist analog zum Login-Screen, nur das Dashboard zeigt den Content nach Login */
   </style>
 </head>
 <body>
-  <div class="panel">
+  <div id="mainScreen" class="panel">
     <div class="logo-container">
-      <img src="../assets/images/logo.png" alt="Acodemy Logo"/>
+      <img src="assets/images/logo.png" alt="Codegame Logo">
+    </div>
+    <h2>Willkommen bei Acodemy!</h2>
+    <p>Angemeldet als <strong id="userEmail"></strong></p>
+
+    <div class="btn-group">
+      <button id="logoutBtn" class="btn logout">Ausloggen</button>
+      <button id="emailBtn" class="btn secondary">E-Mail ändern</button>
+      <button id="passwordBtn" class="btn secondary">Passwort ändern</button>
     </div>
 
-    <h2>Willkommen bei Acodemy!</h2>
-    <p>Angemeldet als <strong id="userMail"></strong></p>
+    <div id="emailChange" class="change-group hidden">
+      <input type="email" id="newEmail" class="form-input" placeholder="Neue E-Mail">
+      <button id="saveEmailBtn" class="btn logout">Speichern</button>
+    </div>
 
-    <button id="logoutBtn" class="btn logout">Ausloggen</button>
-
-    <h3>E-Mail ändern</h3>
-    <input id="newMail" class="input" type="email" placeholder="Neue E-Mail"/>
-
-    <h3>Passwort ändern</h3>
-    <input id="newPass" class="input" type="password" placeholder="Neues Passwort"/>
-
-    <button id="saveMailBtn" class="btn">E-Mail speichern</button>
-    <button id="savePassBtn" class="btn">Passwort speichern</button>
+    <div id="passwordChange" class="change-group hidden">
+      <input type="password" id="newPassword" class="form-input" placeholder="Neues Passwort">
+      <button id="savePasswordBtn" class="btn logout">Speichern</button>
+    </div>
   </div>
 
-  <script src="../config.js"></script>
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import {
-      getAuth, onAuthStateChanged, signOut,
-      updateEmail, updatePassword
-    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-
-    const app  = initializeApp(window.firebaseConfig);
-    const auth = getAuth(app);
-
-    const userMail     = document.getElementById('userMail');
-    const newMailInput = document.getElementById('newMail');
-    const newPassInput = document.getElementById('newPass');
-
-    onAuthStateChanged(auth,user=>{
-      if(!user||!user.emailVerified){
-        window.location.href='login.html'; return;
+    import { getAuth, onAuthStateChanged, signOut, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+    
+    const auth = getAuth();
+    
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        document.getElementById('userEmail').textContent = user.email;
+      } else {
+        window.location.href = 'login.html'; // Redirect to login page if not logged in
       }
-      userMail.textContent=user.email;
     });
 
-    document.getElementById('logoutBtn').onclick = ()=>signOut(auth);
-
-    document.getElementById('saveMailBtn').onclick = async () => {
-      const nm=newMailInput.value.trim();
-      if(!nm)return alert('Neue E-Mail eingeben');
-      try{await updateEmail(auth.currentUser,nm);
-           alert('E-Mail aktualisiert – bitte neu anmelden');
-           signOut(auth);
-      }catch(e){alert(e.message);}
+    document.getElementById('logoutBtn').onclick = async () => {
+      await signOut(auth);
+      window.location.href = 'login.html'; // Redirect to login page on logout
     };
 
-    document.getElementById('savePassBtn').onclick = async () => {
-      const np=newPassInput.value;
-      if(!np)return alert('Neues Passwort eingeben');
-      try{await updatePassword(auth.currentUser,np);
-           alert('Passwort geändert – bitte neu anmelden');
-           signOut(auth);
-      }catch(e){alert(e.message);}
+    document.getElementById('saveEmailBtn').onclick = async () => {
+      const newEmail = document.getElementById('newEmail').value.trim();
+      if (newEmail) {
+        await updateEmail(auth.currentUser, newEmail);
+        alert('E-Mail erfolgreich geändert');
+      } else {
+        alert('Bitte neue E-Mail eingeben');
+      }
+    };
+
+    document.getElementById('savePasswordBtn').onclick = async () => {
+      const newPassword = document.getElementById('newPassword').value.trim();
+      if (newPassword) {
+        await updatePassword(auth.currentUser, newPassword);
+        alert('Passwort erfolgreich geändert');
+      } else {
+        alert('Bitte neues Passwort eingeben');
+      }
     };
   </script>
 </body>
