@@ -44,12 +44,12 @@
       font-size:var(--fs-input);padding:0.75rem 1rem;
       border:var(--bw) solid var(--border);border-radius:var(--radius);
       background:var(--bg-secondary);color:var(--text-primary);
-      transition:var(--transition);outline:none;
+      transition:var(--transition);outline:none;width:100%;box-sizing:border-box;
     }
     .form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
     
-    .pwd-wrapper{position:relative}
-    .pwd-wrapper input{padding-right:4rem}
+    .pwd-wrapper{position:relative;width:100%}
+    .pwd-wrapper input{padding-right:4rem;width:100%}
     .pwd-toggle{
       position:absolute;top:50%;right:1rem;transform:translateY(-50%);
       background:none;border:none;color:var(--accent);cursor:pointer;
@@ -267,7 +267,9 @@
         setLoading(true);
 
         if (isSignup) {
-          await createUserWithEmailAndPassword(auth, email, password);
+          const credential = await createUserWithEmailAndPassword(auth, email, password);
+          // Bei E-Mail-Registrierung Verifikations-E-Mail senden
+          await credential.user.sendEmailVerification();
           // Weiterleitung erfolgt durch onAuthStateChanged
         } else {
           await signInWithEmailAndPassword(auth, email, password);
