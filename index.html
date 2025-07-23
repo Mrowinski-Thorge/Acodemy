@@ -20,17 +20,17 @@
       --accent-hover: #2563eb;
       --shadow: 0 10px 15px rgba(0,0,0,0.1),0 4px 6px rgba(0,0,0,0.1);
       --radius: 1rem;
-      --bw: 3px;               /* border-width */
-      --fs-input: 1.125rem;    /* input font-size */
-      --fs-btn: 1.125rem;      /* button font-size */
+      --bw: 3px;
+      --fs-input: 1.125rem;
+      --fs-btn: 1.125rem;
       --transition: all .3s ease-out;
       --blur: blur(1px);
     }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    html,body{height:100%;background:var(--bg-secondary);font-family:'Inter',sans-serif;}
-    .hidden{display:none!important;}
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+    html,body { height:100%; background:var(--bg-secondary); font-family:'Inter',sans-serif; }
+    .hidden { display:none!important; }
 
-    /* Container für Login und Main */
+    /* Panel-Grundlayout */
     .panel {
       max-width:400px;
       width:90%;
@@ -40,25 +40,41 @@
       border:var(--bw) solid var(--border);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
+      display:flex; flex-direction:column; align-items:center;
       transition:var(--transition);
     }
 
-    /* Logo */
-    .logo-container{margin-bottom:-50rem;}
-    .logo-container img{max-height:300px;transition:var(--transition);}
+    /* ---------------------------- */
+    /* Neuer Logo-Wrapper für PNG   */
+    .logo-wrapper {
+      position: relative;
+      width: auto;
+      height: 300px;         /* fester Ausschnitt */
+      overflow: hidden;      /* transparenten Rand ausblenden */
+      margin-bottom: 1rem;   /* Abstand nach unten */
+    }
+    .logo-wrapper img {
+      position: absolute;
+      top: -20px;            /* Rand oben wegschieben */
+      left: 50%;
+      transform: translateX(-50%);
+      max-height: calc(300px + 40px); /* 40px Puffer für Ränder */
+      width: auto;
+      transition:var(--transition);
+    }
+    /* ---------------------------- */
 
     /* Überschrift */
-    h2{font-size:1.75rem;color:var(--text-primary);margin-bottom:.75rem;}
+    h2 {
+      font-size:1.75rem;
+      color:var(--text-primary);
+      margin-bottom:.75rem;
+    }
 
-    /* Formular */
+    /* E-Mail/Passwort-Form */
     .auth-form {
-      width:100%;
-      display:flex;
-      flex-direction:column;
-      gap:.75rem;
+      width:100%; display:flex;
+      flex-direction:column; gap:.75rem;
       margin-bottom:.75rem;
     }
     .form-input {
@@ -70,83 +86,95 @@
       color:var(--text-primary);
       transition:var(--transition);
     }
-    .form-input:focus{outline:none;}
-    .form-input:active{filter:var(--blur);}
-    .pwd-wrapper{position:relative;}
-    .pwd-wrapper input{padding-right:3.5rem;}
+    .form-input:focus { outline:none; }
+    .form-input:active { filter:var(--blur); }
+    .pwd-wrapper { position:relative; }
+    .pwd-wrapper input { padding-right:3.5rem; }
     .pwd-toggle {
       position:absolute; top:50%; right:1rem;
       transform:translateY(-50%);
-      background:none;border:none;
-      font-size:.9rem;color:var(--accent);
-      cursor:pointer;transition:var(--transition);
+      background:none; border:none;
+      font-size:.9rem; color:var(--accent);
+      cursor:pointer; transition:var(--transition);
     }
     .forgot-link {
-      text-align:center;font-size:.875rem;
-      color:var(--accent);margin:-.5rem 0 1rem;
+      text-align:center; font-size:.875rem;
+      color:var(--accent);
+      margin:-.5rem 0 1rem;
     }
     .primary-btn {
       font-size:var(--fs-btn);
-      padding:.75rem;width:100%;
-      background:var(--accent);color:#fff;
-      border:none;border-radius:var(--radius);
-      cursor:pointer;transition:var(--transition);
+      padding:.75rem; width:100%;
+      background:var(--accent); color:#fff;
+      border:none; border-radius:var(--radius);
+      cursor:pointer; transition:var(--transition);
     }
-    .primary-btn:focus{outline:none;}
-    .primary-btn:active{filter:var(--blur);}
-    .primary-btn:hover{background:var(--accent-hover);}
+    .primary-btn:focus { outline:none; }
+    .primary-btn:active { filter:var(--blur); }
+    .primary-btn:hover { background:var(--accent-hover); }
 
-    /* „ODER“-Separator */
+    /* ODER-Separator */
     .separator {
-      width:100%;text-align:center;
-      font-size:.875rem;color:var(--text-secondary);
-      margin:.75rem 0;position:relative;
+      width:100%; text-align:center;
+      font-size:.875rem; color:var(--text-secondary);
+      margin:.75rem 0; position:relative;
     }
     .separator::before, .separator::after {
-      content:"";position:absolute;top:50%;
-      width:40%;height:1px;background:var(--border);
+      content:""; position:absolute; top:50%;
+      width:40%; height:1px; background:var(--border);
     }
-    .separator::before{left:0;}
-    .separator::after{right:0;}
-    .separator span{padding:0 .5rem;background:var(--bg-primary);position:relative;}
+    .separator::before { left:0; }
+    .separator::after { right:0; }
+    .separator span {
+      padding:0 .5rem; background:var(--bg-primary);
+      position:relative;
+    }
 
     /* Social-Buttons */
-    .social-btns{
-      width:100%;display:flex;
-      flex-direction:column;gap:.75rem;
+    .social-btns {
+      width:100%; display:flex;
+      flex-direction:column; gap:.75rem;
       margin-bottom:1rem;
     }
-    .social-btn{
-      display:flex;align-items:center;gap:.75rem;
+    .social-btn {
+      display:flex; align-items:center; gap:.75rem;
       font-size:var(--fs-btn);
-      padding:.75rem 1rem;width:100%;
+      padding:.75rem 1rem; width:100%;
       border:var(--bw) solid var(--border);
       border-radius:var(--radius);
       background:var(--bg-primary);
-      cursor:pointer;transition:var(--transition);
+      cursor:pointer; transition:var(--transition);
     }
-    .social-btn:focus{outline:none;}
-    .social-btn:active{filter:var(--blur);}
-    .social-btn.google{border-color:#4285f4;color:#4285f4;}
-    .social-btn.google:hover{background:#4285f4;color:#fff;}
-    .social-btn.github{border-color:#333;color:#333;}
-    .social-btn.github:hover{background:#333;color:#fff;}
-    .social-btn .icon{
-      width:24px;height:24px;flex-shrink:0;
+    .social-btn:focus { outline:none; }
+    .social-btn:active { filter:var(--blur); }
+    .social-btn.google {
+      border-color:#4285f4; color:#4285f4;
+    }
+    .social-btn.google:hover {
+      background:#4285f4; color:#fff;
+    }
+    .social-btn.github {
+      border-color:#333; color:#333;
+    }
+    .social-btn.github:hover {
+      background:#333; color:#fff;
+    }
+    .social-btn .icon {
+      width:24px; height:24px; flex-shrink:0;
       background-size:contain;
       background-repeat:no-repeat;
       background-position:center;
     }
-    .google-icon{
+    .google-icon {
       background-image:url("https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg");
     }
-    .github-icon{
+    .github-icon {
       background-image:url("https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png");
     }
 
-    /* Toggle „Registrieren/Anmelden“ */
+    /* Registrieren/Anmelden Toggle */
     .form-switch-text {
-      font-size:.9rem;color:var(--text-secondary);
+      font-size:.9rem; color:var(--text-secondary);
     }
     .form-switch-text a {
       color:var(--accent);
@@ -155,45 +183,47 @@
       margin:0 .5rem;
     }
 
-    /* Main-Screen Buttons */
+    /* Hauptbildschirm */
     .btn-group {
-      width:100%;display:flex;
-      flex-direction:column;gap:.75rem;
+      width:100%; display:flex;
+      flex-direction:column; gap:.75rem;
       margin-top:1rem;
     }
     .btn {
-      padding:.75rem;width:100%;
+      padding:.75rem; width:100%;
       border:var(--bw) solid var(--border);
       border-radius:var(--radius);
       font-size:var(--fs-btn);
-      cursor:pointer;transition:var(--transition);
+      cursor:pointer; transition:var(--transition);
       background:var(--bg-secondary);
       color:var(--text-primary);
     }
-    .btn.logout{
+    .btn.logout {
       background:var(--accent);
       border-color:var(--accent);
       color:#fff;
     }
-    .btn.logout:hover{
+    .btn.logout:hover {
       background:var(--accent-hover);
     }
-    .btn.secondary:hover{
+    .btn.secondary:hover {
       background:var(--bg-primary);
     }
-    .change-group{
-      width:100%;margin-top:1rem;
-      display:flex;flex-direction:column;gap:.5rem;
+    .change-group {
+      width:100%; margin-top:1rem;
+      display:flex; flex-direction:column; gap:.5rem;
     }
   </style>
 </head>
 <body>
 
-  <!-- LOGIN -->
+  <!-- LOGIN-SCREEN -->
   <div id="loginScreen" class="panel">
-    <div class="logo-container">
+    <!-- Logo mit Wrapper -->
+    <div class="logo-wrapper">
       <img src="assets/images/logo.png" alt="Codegame Logo">
     </div>
+
     <h2 id="formTitle">Anmelden</h2>
 
     <form id="authForm" class="auth-form">
@@ -227,9 +257,9 @@
     </p>
   </div>
 
-  <!-- MAIN SCREEN -->
+  <!-- MAIN-SCREEN -->
   <div id="mainScreen" class="panel hidden">
-    <div class="logo-container">
+    <div class="logo-wrapper">
       <img src="assets/images/logo.png" alt="Codegame Logo">
     </div>
     <h2>Willkommen bei Codegame!</h2>
@@ -264,7 +294,7 @@
       GoogleAuthProvider, GithubAuthProvider
     } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-    // 1) Firebase
+    // Firebase init
     const firebaseConfig = {
       apiKey: "AIzaSyDrbeHimI43xjAaw-PvxtZUDh0v3bZA4XQ",
       authDomain: "codegame-dev.firebaseapp.com",
@@ -274,23 +304,23 @@
       appId: "1:787254922496:web:e4728c517363197eb7f7e5",
       measurementId: "G-R3X0TKGNZV"
     };
-    const app   = initializeApp(firebaseConfig);
+    const app  = initializeApp(firebaseConfig);
     getAnalytics(app);
-    const auth  = getAuth(app);
+    const auth = getAuth(app);
 
-    // 2) Social-Provider
+    // Provider
     const googleProvider = new GoogleAuthProvider();
     const githubProvider = new GithubAuthProvider();
     githubProvider.addScope('user:email');
 
-    // 3) UI-Referenzen
-    const loginScreen     = document.getElementById('loginScreen');
-    const mainScreen      = document.getElementById('mainScreen');
-    const userEmailSpan   = document.getElementById('userEmail');
-    const emailChangeGrp  = document.getElementById('emailChange');
-    const passwordChangeG = document.getElementById('passwordChange');
+    // UI-Refs
+    const loginScreen    = document.getElementById('loginScreen');
+    const mainScreen     = document.getElementById('mainScreen');
+    const userEmailSpan  = document.getElementById('userEmail');
+    const emailChangeGrp = document.getElementById('emailChange');
+    const passwordChangeG= document.getElementById('passwordChange');
 
-    // 4) Toggle Anmelden/Registrieren
+    // Toggle Login/Signup
     let isSignup = false;
     function updateToggleUI(){
       document.getElementById('loginPrompt').classList.toggle('hidden', isSignup);
@@ -304,32 +334,28 @@
     document.getElementById('toggleSignin').onclick = e=>{e.preventDefault();isSignup=false;updateToggleUI()};
     updateToggleUI();
 
-    // 5) Social-Login Handler
+    // Social-Login
     document.getElementById('googleLogin').onclick = ()=>{
-      signInWithPopup(auth,googleProvider)
-        .catch(e=>alert('Google-Login fehlgeschlagen:\n'+e.message));
+      signInWithPopup(auth,googleProvider).catch(e=>alert('Google-Login fehlgeschlagen:\n'+e.message));
     };
     document.getElementById('githubLogin').onclick = ()=>{
-      signInWithPopup(auth,githubProvider)
-        .catch(e=>alert('GitHub-Login fehlgeschlagen:\n'+e.message));
+      signInWithPopup(auth,githubProvider).catch(e=>alert('GitHub-Login fehlgeschlagen:\n'+e.message));
     };
 
-    // 6) E-Mail/Passwort Auth
+    // E-Mail/Passwort Auth
     document.getElementById('authForm').onsubmit = async e=>{
       e.preventDefault();
       const email = e.target.email.value.trim();
       const pw    = e.target.password.value;
       try {
-        if(isSignup)
-          await createUserWithEmailAndPassword(auth,email,pw);
-        else
-          await signInWithEmailAndPassword(auth,email,pw);
+        if(isSignup) await createUserWithEmailAndPassword(auth,email,pw);
+        else         await signInWithEmailAndPassword(auth,email,pw);
       } catch(err){
         alert((isSignup?'Registrierung':'Login')+' fehlgeschlagen:\n'+err.message);
       }
     };
 
-    // 7) Passwort-Anzeigen
+    // Passwort-Anzeige
     document.getElementById('togglePassword').onclick = ()=>{
       const pw = document.getElementById('password');
       const btn = document.getElementById('togglePassword');
@@ -337,20 +363,20 @@
       else{pw.type='password';btn.textContent='Anzeigen'}
     };
 
-    // 8) Passwort-Reset
+    // Passwort-Reset
     document.getElementById('forgotPassword').onclick = async e=>{
       e.preventDefault();
       const mail = document.getElementById('email').value.trim();
-      if(!mail) return alert('Bitte E-Mail eingeben');
-      try {
+      if(!mail)return alert('Bitte E-Mail eingeben');
+      try{
         await sendPasswordResetEmail(auth,mail);
         alert('Reset-Mail gesendet');
-      } catch(err){
+      }catch(err){
         alert('Fehler:\n'+err.message);
       }
     };
 
-    // 9) Auth-Status beobachten
+    // Auth-Status
     onAuthStateChanged(auth,user=>{
       if(user){
         loginScreen.classList.add('hidden');
@@ -364,9 +390,9 @@
       }
     });
 
-    // 10) Main-Screen Aktionen
-    document.getElementById('logoutBtn').onclick   = ()=>signOut(auth);
-    document.getElementById('emailBtn').onclick    = ()=>{
+    // Main-Screen Aktionen
+    document.getElementById('logoutBtn').onclick = ()=>signOut(auth);
+    document.getElementById('emailBtn').onclick  = ()=>{
       passwordChangeG.classList.add('hidden');
       emailChangeGrp.classList.toggle('hidden');
     };
@@ -377,17 +403,17 @@
     document.getElementById('saveEmailBtn').onclick = async ()=>{
       const ne = document.getElementById('newEmail').value.trim();
       if(!ne)return alert('Neue E-Mail eingeben');
-      try {
+      try{
         await updateEmail(auth.currentUser,ne);
         alert('E-Mail aktualisiert');
-        userEmailSpan.textContent=ne;
+        userEmailSpan.textContent = ne;
         emailChangeGrp.classList.add('hidden');
       }catch(err){
         alert('Fehler:\n'+err.message);
       }
     };
     document.getElementById('savePasswordBtn').onclick = async ()=>{
-      const np=document.getElementById('newPassword').value;
+      const np = document.getElementById('newPassword').value;
       if(!np)return alert('Neues Passwort eingeben');
       try{
         await updatePassword(auth.currentUser,np);
