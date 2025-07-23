@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Acodemy | Login</title>
+  <title>Acodemy | Login</title>
   <!-- Google Fonts + Material Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
@@ -15,13 +15,15 @@
       --border:#e2e8f0; --accent:#3b82f6; --accent-hover:#2563eb;
       --shadow:0 10px 15px rgba(0,0,0,0.1),0 4px 6px rgba(0,0,0,0.1);
       --radius:1rem; --bw:4px; --fs-input:1.125rem; --fs-btn:1.125rem;
+      --transition: all 0.3s ease-out;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:var(--bg-secondary);font-family:'Inter',sans-serif}
+    body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px 0}
     .hidden{display:none!important}
 
     .panel{
-      max-width:400px;width:90%;margin:20px auto;
+      max-width:400px;width:90%;
       padding:1.5rem 2rem;background:var(--bg-primary);
       border:var(--bw) solid var(--border);border-radius:var(--radius);
       box-shadow:var(--shadow);display:flex;flex-direction:column;
@@ -29,32 +31,46 @@
     }
 
     .logo-container{margin-bottom:1rem;text-align:center}
-    .logo-container img{height:110px;width:auto}
+    .logo-container img{
+      height:110px;width:auto;
+      object-fit:contain;
+      transition:var(--transition);
+    }
 
-    h2{font-size:1.75rem;color:var(--text-primary);margin-bottom:1rem}
+    h2{font-size:1.75rem;color:var(--text-primary);margin-bottom:1rem;font-weight:600}
 
     .auth-form{width:100%;display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1rem}
     .form-input{
       font-size:var(--fs-input);padding:0.75rem 1rem;
       border:var(--bw) solid var(--border);border-radius:var(--radius);
       background:var(--bg-secondary);color:var(--text-primary);
+      transition:var(--transition);outline:none;
     }
+    .form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
+    
     .pwd-wrapper{position:relative}
     .pwd-wrapper input{padding-right:4rem}
     .pwd-toggle{
       position:absolute;top:50%;right:1rem;transform:translateY(-50%);
       background:none;border:none;color:var(--accent);cursor:pointer;
+      font-size:0.875rem;transition:var(--transition);
     }
+    .pwd-toggle:hover{color:var(--accent-hover)}
+    
     .forgot-link{
       text-align:center;color:var(--accent);font-size:0.875rem;
-      margin:-0.5rem 0 1rem;
+      margin:-0.5rem 0 1rem;text-decoration:none;transition:var(--transition);
     }
+    .forgot-link:hover{color:var(--accent-hover)}
+    
     .primary-btn{
       width:100%;padding:0.75rem;background:var(--accent);
       color:#fff;border:none;border-radius:var(--radius);
-      font-size:var(--fs-btn);cursor:pointer;
+      font-size:var(--fs-btn);cursor:pointer;transition:var(--transition);
+      font-weight:500;
     }
-    .primary-btn:hover{background:var(--accent-hover)}
+    .primary-btn:hover{background:var(--accent-hover);transform:translateY(-1px)}
+    .primary-btn:disabled{opacity:0.7;cursor:not-allowed}
 
     .separator{width:100%;text-align:center;position:relative;margin:1rem 0;color:var(--text-secondary)}
     .separator::before,.separator::after{
@@ -65,45 +81,49 @@
 
     .social-btns{width:100%;display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1rem}
     .social-btn{
-      display:flex;align-items:center;gap:0.75rem;
+      display:flex;align-items:center;justify-content:center;gap:0.75rem;
       padding:0.75rem;border:var(--bw) solid var(--border);
-      border-radius:var(--radius);cursor:pointer;transition:0.3s;
-      background:var(--bg-primary);
+      border-radius:var(--radius);cursor:pointer;transition:var(--transition);
+      background:var(--bg-primary);font-weight:500;
     }
     .social-btn.google{border-color:#4285f4;color:#4285f4}
-    .social-btn.google:hover{background:#4285f4;color:#fff}
+    .social-btn.google:hover{background:#4285f4;color:#fff;transform:translateY(-1px)}
     .social-btn.github{border-color:#333;color:#333}
-    .social-btn.github:hover{background:#333;color:#fff}
+    .social-btn.github:hover{background:#333;color:#fff;transform:translateY(-1px)}
 
-    .icon{width:24px;height:24px;background-size:contain;background-repeat:no-repeat}
+    .icon{width:24px;height:24px;background-size:contain;background-repeat:no-repeat;flex-shrink:0}
     .google-icon{background-image:url("https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg")}
     .github-icon{background-image:url("https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png")}
 
-    .form-switch-text{font-size:0.9rem;color:var(--text-secondary)}
-    .form-switch-text a{color:var(--accent);text-decoration:none;font-weight:500;margin:0 0.5rem}
+    .form-switch-text{font-size:0.9rem;color:var(--text-secondary);text-align:center}
+    .form-switch-text a{color:var(--accent);text-decoration:none;font-weight:500;margin:0 0.5rem;transition:var(--transition)}
+    .form-switch-text a:hover{color:var(--accent-hover)}
 
-    /* Overlay für E-Mail-Verifikation */
-    #verificationOverlay{
-      display:none;position:fixed;top:0;left:0;width:100%;
-      background:#fff3cd;color:#856404;padding:0.75rem;text-align:center;
-      font-size:0.95rem;cursor:pointer;z-index:1000;
+    /* Loading Spinner */
+    .loading{
+      display:inline-block;width:20px;height:20px;border:2px solid #fff;
+      border-radius:50%;border-top-color:transparent;animation:spin 1s linear infinite;
     }
-    #verificationOverlay.success{
-      background:#d4edda;color:#155724;
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Error Message */
+    .error-message{
+      background:#fef2f2;border:1px solid #fecaca;color:#dc2626;
+      padding:0.75rem;border-radius:var(--radius);margin-bottom:1rem;
+      font-size:0.875rem;text-align:center;
     }
   </style>
 </head>
 <body>
 
-  <div id="verificationOverlay">
-    Bitte verifiziere deine E‑Mail-Adresse (Klick zum Senden)
-  </div>
-
   <div id="loginPanel" class="panel">
     <div class="logo-container">
-      <img src="assets/images/logo.png" alt="Acodemy Logo">
+      <img src="../assets/images/logo.png" alt="Acodemy Logo" onerror="this.style.display='none'">
     </div>
     <h2 id="formTitle">Anmelden</h2>
+    
+    <div id="errorMessage" class="error-message hidden"></div>
+    
     <form id="authForm" class="auth-form">
       <input type="email" id="email" class="form-input" placeholder="E‑Mail" required>
       <div class="pwd-wrapper">
@@ -111,9 +131,14 @@
         <button type="button" id="togglePassword" class="pwd-toggle">Anzeigen</button>
       </div>
       <a href="#" id="forgotPassword" class="forgot-link">Passwort vergessen?</a>
-      <button type="submit" id="submitBtn" class="primary-btn">Anmelden</button>
+      <button type="submit" id="submitBtn" class="primary-btn">
+        <span id="btnText">Anmelden</span>
+        <span id="btnLoading" class="loading hidden"></span>
+      </button>
     </form>
+    
     <div class="separator"><span>ODER</span></div>
+    
     <div class="social-btns">
       <button id="googleLogin" class="social-btn google">
         <div class="icon google-icon"></div>Mit Google anmelden
@@ -122,6 +147,7 @@
         <div class="icon github-icon"></div>Mit GitHub anmelden
       </button>
     </div>
+    
     <p class="form-switch-text">
       <span id="loginPrompt">Noch kein Konto?</span>
       <a href="#" id="toggleSignup">Registrieren</a>
@@ -148,88 +174,184 @@
       appId: "1:787254922496:web:e4728c517363197eb7f7e5",
       measurementId: "G-R3X0TKGNZV"
     };
-    const app  = initializeApp(firebaseConfig);
+    
+    const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const googleProvider = new GoogleAuthProvider();
     const githubProvider = new GithubAuthProvider();
 
-    // Overlay-Funktion
-    const overlay = document.getElementById('verificationOverlay');
-    const showOverlay = (msg, success=false) => {
-      overlay.textContent = msg;
-      overlay.classList.toggle('success', success);
-      overlay.style.display = 'block';
+    // UI Elements
+    const errorDiv = document.getElementById('errorMessage');
+    const submitBtn = document.getElementById('submitBtn');
+    const btnText = document.getElementById('btnText');
+    const btnLoading = document.getElementById('btnLoading');
+
+    // Error handling
+    const showError = (message) => {
+      errorDiv.textContent = message;
+      errorDiv.classList.remove('hidden');
+      setTimeout(() => errorDiv.classList.add('hidden'), 5000);
     };
-    overlay.onclick = async () => {
-      try {
-        await auth.currentUser.sendEmailVerification();
-        showOverlay('Verifizierungs‑Mail gesendet!', true);
-        setTimeout(() => overlay.style.display='none', 3000);
-      } catch(e) {
-        alert('Fehler: '+e.message);
-      }
+
+    const hideError = () => {
+      errorDiv.classList.add('hidden');
+    };
+
+    // Loading state
+    const setLoading = (loading) => {
+      submitBtn.disabled = loading;
+      btnText.classList.toggle('hidden', loading);
+      btnLoading.classList.toggle('hidden', !loading);
     };
 
     // Toggle Login/Signup
     let isSignup = false;
-    const updUI = ()=> {
+    const updateUI = () => {
       document.getElementById('loginPrompt').classList.toggle('hidden', isSignup);
       document.getElementById('toggleSignup').classList.toggle('hidden', isSignup);
       document.getElementById('registerPrompt').classList.toggle('hidden', !isSignup);
       document.getElementById('toggleSignin').classList.toggle('hidden', !isSignup);
-      document.getElementById('formTitle').textContent = isSignup?'Registrieren':'Anmelden';
-      document.getElementById('submitBtn').textContent = isSignup?'Registrieren':'Anmelden';
+      document.getElementById('formTitle').textContent = isSignup ? 'Registrieren' : 'Anmelden';
+      btnText.textContent = isSignup ? 'Registrieren' : 'Anmelden';
+      hideError();
     };
-    document.getElementById('toggleSignup').onclick = e=>{e.preventDefault();isSignup=true;updUI()};
-    document.getElementById('toggleSignin').onclick = e=>{e.preventDefault();isSignup=false;updUI()};
-    updUI();
+
+    document.getElementById('toggleSignup').onclick = (e) => {
+      e.preventDefault();
+      isSignup = true;
+      updateUI();
+    };
+
+    document.getElementById('toggleSignin').onclick = (e) => {
+      e.preventDefault();
+      isSignup = false;
+      updateUI();
+    };
+
+    updateUI();
 
     // Social Login
-    document.getElementById('googleLogin').onclick = ()=>signInWithPopup(auth,googleProvider).catch(e=>alert(e.message));
-    document.getElementById('githubLogin').onclick = ()=>signInWithPopup(auth,githubProvider).catch(e=>alert(e.message));
+    document.getElementById('googleLogin').onclick = async () => {
+      try {
+        hideError();
+        await signInWithPopup(auth, googleProvider);
+        // Weiterleitung erfolgt durch onAuthStateChanged
+      } catch (error) {
+        showError('Google-Anmeldung fehlgeschlagen: ' + error.message);
+      }
+    };
+
+    document.getElementById('githubLogin').onclick = async () => {
+      try {
+        hideError();
+        await signInWithPopup(auth, githubProvider);
+        // Weiterleitung erfolgt durch onAuthStateChanged
+      } catch (error) {
+        showError('GitHub-Anmeldung fehlgeschlagen: ' + error.message);
+      }
+    };
 
     // E-Mail/Passwort Auth
-    document.getElementById('authForm').onsubmit = async e => {
+    document.getElementById('authForm').onsubmit = async (e) => {
       e.preventDefault();
-      const email = e.target.email.value.trim(), pw = e.target.password.value;
+      const email = e.target.email.value.trim();
+      const password = e.target.password.value;
+
+      if (!email || !password) {
+        showError('Bitte alle Felder ausfüllen');
+        return;
+      }
+
       try {
-        let cred = isSignup
-          ? await createUserWithEmailAndPassword(auth,email,pw)
-          : await signInWithEmailAndPassword(auth,email,pw);
-        // E-Mail verifizieren bei Signup
+        hideError();
+        setLoading(true);
+
         if (isSignup) {
-          await cred.user.sendEmailVerification();
-          showOverlay('Verifizierungs‑Mail gesendet!', true);
-          return;
+          await createUserWithEmailAndPassword(auth, email, password);
+          // Weiterleitung erfolgt durch onAuthStateChanged
+        } else {
+          await signInWithEmailAndPassword(auth, email, password);
+          // Weiterleitung erfolgt durch onAuthStateChanged
         }
-      } catch(err) {
-        alert(err.message);
+      } catch (error) {
+        let errorMessage = 'Ein Fehler ist aufgetreten';
+        
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            errorMessage = 'Diese E-Mail wird bereits verwendet';
+            break;
+          case 'auth/weak-password':
+            errorMessage = 'Das Passwort ist zu schwach';
+            break;
+          case 'auth/user-not-found':
+          case 'auth/wrong-password':
+            errorMessage = 'Ungültige E-Mail oder Passwort';
+            break;
+          case 'auth/invalid-email':
+            errorMessage = 'Ungültige E-Mail-Adresse';
+            break;
+          case 'auth/too-many-requests':
+            errorMessage = 'Zu viele Versuche. Bitte später erneut versuchen.';
+            break;
+          default:
+            errorMessage = error.message;
+        }
+        
+        showError(errorMessage);
+      } finally {
+        setLoading(false);
       }
     };
 
     // Passwort anzeigen/verbergen
     document.getElementById('togglePassword').onclick = () => {
-      const pw = document.getElementById('password'), btn = document.getElementById('togglePassword');
-      if (pw.type==='password'){pw.type='text';btn.textContent='Verbergen'}
-      else{pw.type='password';btn.textContent='Anzeigen'}
+      const pwInput = document.getElementById('password');
+      const toggleBtn = document.getElementById('togglePassword');
+      
+      if (pwInput.type === 'password') {
+        pwInput.type = 'text';
+        toggleBtn.textContent = 'Verbergen';
+      } else {
+        pwInput.type = 'password';
+        toggleBtn.textContent = 'Anzeigen';
+      }
     };
 
     // Passwort-Reset
-    document.getElementById('forgotPassword').onclick = async e => {
+    document.getElementById('forgotPassword').onclick = async (e) => {
       e.preventDefault();
-      const mail = document.getElementById('email').value.trim();
-      if (!mail) return alert('Bitte E‑Mail eingeben');
-      try{await sendPasswordResetEmail(auth,mail);alert('Reset-Mail gesendet')}catch(e){alert(e.message)}
+      const email = document.getElementById('email').value.trim();
+      
+      if (!email) {
+        showError('Bitte E-Mail-Adresse eingeben');
+        return;
+      }
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        showError = () => {}; // Prevent error styling
+        errorDiv.style.background = '#d4edda';
+        errorDiv.style.borderColor = '#c3e6cb';
+        errorDiv.style.color = '#155724';
+        errorDiv.textContent = 'Passwort-Reset-Mail wurde gesendet';
+        errorDiv.classList.remove('hidden');
+        setTimeout(() => {
+          errorDiv.classList.add('hidden');
+          // Reset error styling
+          errorDiv.style.background = '';
+          errorDiv.style.borderColor = '';
+          errorDiv.style.color = '';
+        }, 5000);
+      } catch (error) {
+        showError('Fehler beim Senden der Reset-Mail: ' + error.message);
+      }
     };
 
-    // Auth-Status & Verifikation prüfen
-    onAuthStateChanged(auth,user=>{
+    // Auth-Status überwachen - Direkte Weiterleitung ohne Verifikation beim Login
+    onAuthStateChanged(auth, (user) => {
       if (user) {
-        if (user.emailVerified) {
-          location.href = 'dashboard.html';
-        } else {
-          showOverlay('Bitte verifiziere deine E‑Mail-Adresse');
-        }
+        // Sofortige Weiterleitung zum Dashboard
+        window.location.href = 'dashboard.html';
       }
     });
   </script>
