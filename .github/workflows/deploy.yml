@@ -1,25 +1,37 @@
 name: Build & Deploy
 
+# Trigger auf Push in main
 on:
   push:
     branches:
       - main
 
+# Erforderliche Schreibrechte:
+permissions:
+  contents: write        # zum Committen neuer Dateien
+  pages: write           # zum Veröffentlichen auf GitHub Pages
+  id-token: write        # falls Du später OIDC brauchst
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
 
-      # → Verzeichnis public/ anlegen, falls es noch fehlt
+    steps:
+      # 1) Hol’ den Code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true   # <— ganz wichtig für gh-pages-Push
+
+      # 2) Leg public/ an (falls nicht da)
       - name: Prepare public directory
         run: mkdir -p public
 
+      # 3) Generiere config.js aus dem Secret
       - name: Generate config.js from Secret
         run: |
           cat <<EOF > public/config.js
-          // !!! Diese Datei wird automatisch erzeugt !!!
+          // !!! Automatisch erzeugt !!!
           window.firebaseConfig = {
             apiKey: '${{ secrets.FIREBASE_API_KEY }}',
             authDomain: 'codegame-dev.firebaseapp.com',
@@ -31,6 +43,7 @@ jobs:
           };
           EOF
 
+      # 4) Deploy zu GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
