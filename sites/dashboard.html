@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Codegame | Dashboard</title>
+  <title>Acodemy | Dashboard</title>
 
   <!-- Inter & Material Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -19,15 +19,40 @@
       --border: #e2e8f0;
       --accent: #3b82f6;
       --accent-hover: #2563eb;
+      --success: #10b981;
+      --success-hover: #059669;
+      --warning: #f59e0b;
       --shadow: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.1);
       --radius: 1rem;
+      --transition: all 0.3s ease-out;
     }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg-secondary);
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px 0;
+    }
+
+    .hidden { display: none !important; }
 
     .panel {
       max-width: 400px;
       width: 90%;
-      margin: 10px auto 20px;
-      padding: 1rem 1.5rem 2rem;
+      padding: 1.5rem 2rem 2rem;
       background: var(--bg-primary);
       border: 4px solid var(--border);
       border-radius: var(--radius);
@@ -35,136 +60,570 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      position: relative;
     }
 
     .logo-container {
-      margin-bottom: -1rem;
+      margin-bottom: 1rem;
       text-align: center;
     }
 
     .logo-container img {
-      max-height: 110px;
+      height: 110px;
       width: auto;
-      display: inline-block;
+      object-fit: contain;
       transition: var(--transition);
     }
 
     h2 {
       font-size: 1.75rem;
       color: var(--text-primary);
-      margin-bottom: .75rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .user-info {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+      width: 100%;
+    }
+
+    .user-email {
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .verification-status {
+      font-size: 0.875rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+    }
+
+    .verified {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .unverified {
+      background: #fef3c7;
+      color: #92400e;
     }
 
     .btn-group {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: .75rem;
-      margin-top: 1rem;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
     }
 
     .btn {
-      padding: .75rem;
+      padding: 0.75rem 1rem;
       width: 100%;
       border: 4px solid var(--border);
       border-radius: var(--radius);
       font-size: 1.125rem;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.3s ease-out;
+      transition: var(--transition);
       background: var(--bg-secondary);
       color: var(--text-primary);
+      text-align: center;
     }
 
-    .btn.logout {
+    .btn:hover {
+      background: var(--border);
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
       background: var(--accent);
       border-color: var(--accent);
       color: #fff;
     }
 
-    .btn.logout:hover {
+    .btn.primary:hover {
       background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .btn.success {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+
+    .btn.success:hover {
+      background: var(--success-hover);
+      border-color: var(--success-hover);
+    }
+
+    .btn.logout {
+      background: #ef4444;
+      border-color: #ef4444;
+      color: #fff;
+    }
+
+    .btn.logout:hover {
+      background: #dc2626;
+      border-color: #dc2626;
     }
 
     .change-group {
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: .5rem;
+      gap: 0.75rem;
       margin-top: 1rem;
+      padding: 1rem;
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+      border: 2px solid var(--border);
+    }
+
+    .form-input {
+      font-size: 1rem;
+      padding: 0.75rem 1rem;
+      border: 3px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* E-Mail-Verifikations-Overlay */
+    #verificationOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--warning);
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      z-index: 1000;
+      transform: translateY(-100%);
+      transition: transform 0.3s ease-out;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    #verificationOverlay.show {
+      transform: translateY(0);
+    }
+
+    #verificationOverlay.success {
+      background: var(--success);
+    }
+
+    /* Loading Spinner */
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+      margin-left: 0.5rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Error/Success Messages */
+    .message {
+      padding: 0.75rem;
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .message.error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #dc2626;
+    }
+
+    .message.success {
+      background: #dcfce7;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .panel {
+        padding: 1rem 1.5rem;
+      }
+      
+      h2 {
+        font-size: 1.5rem;
+      }
+      
+      .btn {
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- E-Mail-Verifikations-Overlay -->
+  <div id="verificationOverlay">
+    <span id="overlayText">Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)</span>
+    <span id="overlayLoading" class="loading hidden"></span>
+  </div>
+
   <div id="mainScreen" class="panel">
     <div class="logo-container">
-      <img src="assets/images/logo.png" alt="Codegame Logo">
+      <img src="../assets/images/logo.png" alt="Acodemy Logo" onerror="this.style.display='none'">
     </div>
-    <h2>Willkommen bei Codegame!</h2>
-    <p>Angemeldet als <strong id="userEmail"></strong></p>
+    
+    <h2>Willkommen bei Acodemy!</h2>
+    
+    <div class="user-info">
+      <div class="user-email">
+        Angemeldet als <strong id="userEmail">Laden...</strong>
+      </div>
+      <div id="verificationStatus" class="verification-status">
+        Lade Status...
+      </div>
+    </div>
+
+    <div id="messageContainer"></div>
 
     <div class="btn-group">
       <button id="logoutBtn" class="btn logout">Ausloggen</button>
       <button id="emailBtn" class="btn">E-Mail ändern</button>
       <button id="passwordBtn" class="btn">Passwort ändern</button>
+      <button id="verifyEmailBtn" class="btn success hidden">E-Mail verifizieren</button>
     </div>
 
     <div id="emailChange" class="change-group hidden">
-      <input type="email" id="newEmail" class="form-input" placeholder="Neue E-Mail">
-      <button id="saveEmailBtn" class="btn logout">Speichern</button>
+      <h3 style="margin-bottom: 0.5rem; color: var(--text-primary);">E-Mail ändern</h3>
+      <input type="email" id="newEmail" class="form-input" placeholder="Neue E-Mail-Adresse">
+      <div style="display: flex; gap: 0.5rem;">
+        <button id="saveEmailBtn" class="btn primary" style="flex: 1">
+          <span>Speichern</span>
+          <span id="emailLoading" class="loading hidden"></span>
+        </button>
+        <button id="cancelEmailBtn" class="btn" style="flex: 1">Abbrechen</button>
+      </div>
     </div>
 
     <div id="passwordChange" class="change-group hidden">
-      <input type="password" id="newPassword" class="form-input" placeholder="Neues Passwort">
-      <button id="savePasswordBtn" class="btn logout">Speichern</button>
+      <h3 style="margin-bottom: 0.5rem; color: var(--text-primary);">Passwort ändern</h3>
+      <input type="password" id="newPassword" class="form-input" placeholder="Neues Passwort (min. 6 Zeichen)">
+      <div style="display: flex; gap: 0.5rem;">
+        <button id="savePasswordBtn" class="btn primary" style="flex: 1">
+          <span>Speichern</span>
+          <span id="passwordLoading" class="loading hidden"></span>
+        </button>
+        <button id="cancelPasswordBtn" class="btn" style="flex: 1">Abbrechen</button>
+      </div>
     </div>
   </div>
 
   <script type="module">
-    import { getAuth, onAuthStateChanged, signOut, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { 
+      getAuth, onAuthStateChanged, signOut, updateEmail, updatePassword,
+      sendEmailVerification, reload
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-    const auth = getAuth();
+    // Firebase-Konfig
+    const firebaseConfig = {
+      apiKey: "AIzaSyDrbeHimI43xjAaw-PvxtZUDh0v3bZA4XQ",
+      authDomain: "codegame-dev.firebaseapp.com",
+      projectId: "codegame-dev",
+      storageBucket: "codegame-dev.firebasestorage.app",
+      messagingSenderId: "787254922496",
+      appId: "1:787254922496:web:e4728c517363197eb7f7e5",
+      measurementId: "G-R3X0TKGNZV"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        document.getElementById('userEmail').textContent = user.email;
+    // UI Elements
+    const overlay = document.getElementById('verificationOverlay');
+    const overlayText = document.getElementById('overlayText');
+    const overlayLoading = document.getElementById('overlayLoading');
+    const messageContainer = document.getElementById('messageContainer');
+    const verificationStatus = document.getElementById('verificationStatus');
+    const verifyEmailBtn = document.getElementById('verifyEmailBtn');
+
+    // Redirect to login if not authenticated
+    let authChecked = false;
+
+    // Message functions
+    const showMessage = (text, type = 'error') => {
+      const message = document.createElement('div');
+      message.className = `message ${type}`;
+      message.textContent = text;
+      messageContainer.innerHTML = '';
+      messageContainer.appendChild(message);
+      setTimeout(() => {
+        if (messageContainer.contains(message)) {
+          messageContainer.removeChild(message);
+        }
+      }, 5000);
+    };
+
+    // Overlay functions
+    const showOverlay = (text, success = false) => {
+      overlayText.textContent = text;
+      overlay.classList.toggle('success', success);
+      overlay.classList.add('show');
+    };
+
+    const hideOverlay = () => {
+      overlay.classList.remove('show');
+    };
+
+    // Overlay click handler - Send verification email
+    overlay.onclick = async () => {
+      if (!auth.currentUser || auth.currentUser.emailVerified) return;
+      
+      try {
+        overlayText.textContent = 'Sende Verifikations-E-Mail...';
+        overlayLoading.classList.remove('hidden');
+        
+        await sendEmailVerification(auth.currentUser);
+        
+        overlayLoading.classList.add('hidden');
+        showOverlay('Verifikations-E-Mail gesendet!', true);
+        setTimeout(hideOverlay, 3000);
+      } catch (error) {
+        overlayLoading.classList.add('hidden');
+        showMessage('Fehler beim Senden der Verifikations-E-Mail: ' + error.message);
+        hideOverlay();
+      }
+    };
+
+    // Update user status
+    const updateUserStatus = (user) => {
+      if (!user) return;
+      
+      document.getElementById('userEmail').textContent = user.email;
+      
+      const isVerified = user.emailVerified;
+      verificationStatus.textContent = isVerified ? 'E-Mail verifiziert ✓' : 'E-Mail nicht verifiziert';
+      verificationStatus.className = `verification-status ${isVerified ? 'verified' : 'unverified'}`;
+      
+      // Show/hide verification elements
+      if (!isVerified) {
+        showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)');
+        verifyEmailBtn.classList.remove('hidden');
       } else {
-        window.location.href = 'login.html'; // Redirect to login page if not logged in
+        hideOverlay();
+        verifyEmailBtn.classList.add('hidden');
+      }
+    };
+
+    // Auth state change handler
+    onAuthStateChanged(auth, async (user) => {
+      authChecked = true;
+      
+      if (!user) {
+        // Not authenticated - redirect to login
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // Reload user data to get latest verification status
+      try {
+        await reload(user);
+        updateUserStatus(auth.currentUser);
+      } catch (error) {
+        console.error('Error reloading user:', error);
+        updateUserStatus(user);
       }
     });
 
-    document.getElementById('logoutBtn').onclick = () => signOut(auth);
+    // Prevent access if not authenticated
+    if (!authChecked) {
+      // Hide content initially
+      document.getElementById('mainScreen').style.visibility = 'hidden';
+      
+      // Show content only after auth check
+      setTimeout(() => {
+        if (authChecked && auth.currentUser) {
+          document.getElementById('mainScreen').style.visibility = 'visible';
+        }
+      }, 1000);
+    }
 
+    // Logout
+    document.getElementById('logoutBtn').onclick = async () => {
+      try {
+        await signOut(auth);
+        // Redirect happens automatically via onAuthStateChanged
+      } catch (error) {
+        showMessage('Fehler beim Ausloggen: ' + error.message);
+      }
+    };
+
+    // Manual email verification
+    document.getElementById('verifyEmailBtn').onclick = async () => {
+      if (!auth.currentUser) return;
+      
+      try {
+        await sendEmailVerification(auth.currentUser);
+        showMessage('Verifikations-E-Mail gesendet!', 'success');
+      } catch (error) {
+        showMessage('Fehler beim Senden der Verifikations-E-Mail: ' + error.message);
+      }
+    };
+
+    // Email change functionality
     document.getElementById('emailBtn').onclick = () => {
       document.getElementById('passwordChange').classList.add('hidden');
       document.getElementById('emailChange').classList.toggle('hidden');
+      document.getElementById('newEmail').value = '';
     };
 
-    document.getElementById('passwordBtn').onclick = () => {
+    document.getElementById('cancelEmailBtn').onclick = () => {
       document.getElementById('emailChange').classList.add('hidden');
-      document.getElementById('passwordChange').classList.toggle('hidden');
+      document.getElementById('newEmail').value = '';
     };
 
     document.getElementById('saveEmailBtn').onclick = async () => {
-      const newEmail = document.getElementById('newEmail').value;
-      try {
-        await updateEmail(auth.currentUser, newEmail);
-        alert('E-Mail erfolgreich geändert!');
-        document.getElementById('emailChange').classList.add('hidden');
-      } catch (error) {
-        alert('Fehler beim Ändern der E-Mail: ' + error.message);
+      const newEmail = document.getElementById('newEmail').value.trim();
+      const loadingSpinner = document.getElementById('emailLoading');
+      
+      if (!newEmail) {
+        showMessage('Bitte neue E-Mail-Adresse eingeben');
+        return;
       }
+      
+      if (newEmail === auth.currentUser.email) {
+        showMessage('Neue E-Mail-Adresse muss sich von der aktuellen unterscheiden');
+        return;
+      }
+
+      try {
+        loadingSpinner.classList.remove('hidden');
+        await updateEmail(auth.currentUser, newEmail);
+        
+        // Send verification email for new address
+        await sendEmailVerification(auth.currentUser);
+        
+        showMessage('E-Mail erfolgreich geändert! Bitte verifiziere die neue Adresse.', 'success');
+        document.getElementById('emailChange').classList.add('hidden');
+        document.getElementById('newEmail').value = '';
+        
+        // Update UI
+        updateUserStatus(auth.currentUser);
+        
+      } catch (error) {
+        let errorMessage = 'Fehler beim Ändern der E-Mail';
+        
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            errorMessage = 'Diese E-Mail wird bereits verwendet';
+            break;
+          case 'auth/invalid-email':
+            errorMessage = 'Ungültige E-Mail-Adresse';
+            break;
+          case 'auth/requires-recent-login':
+            errorMessage = 'Bitte logge dich erneut ein und versuche es dann nochmal';
+            break;
+          default:
+            errorMessage = 'Fehler beim Ändern der E-Mail: ' + error.message;
+        }
+        
+        showMessage(errorMessage);
+      } finally {
+        loadingSpinner.classList.add('hidden');
+      }
+    };
+
+    // Password change functionality
+    document.getElementById('passwordBtn').onclick = () => {
+      document.getElementById('emailChange').classList.add('hidden');
+      document.getElementById('passwordChange').classList.toggle('hidden');
+      document.getElementById('newPassword').value = '';
+    };
+
+    document.getElementById('cancelPasswordBtn').onclick = () => {
+      document.getElementById('passwordChange').classList.add('hidden');
+      document.getElementById('newPassword').value = '';
     };
 
     document.getElementById('savePasswordBtn').onclick = async () => {
       const newPassword = document.getElementById('newPassword').value;
+      const loadingSpinner = document.getElementById('passwordLoading');
+      
+      if (!newPassword) {
+        showMessage('Bitte neues Passwort eingeben');
+        return;
+      }
+      
+      if (newPassword.length < 6) {
+        showMessage('Passwort muss mindestens 6 Zeichen lang sein');
+        return;
+      }
+
       try {
+        loadingSpinner.classList.remove('hidden');
         await updatePassword(auth.currentUser, newPassword);
-        alert('Passwort erfolgreich geändert!');
+        
+        showMessage('Passwort erfolgreich geändert!', 'success');
         document.getElementById('passwordChange').classList.add('hidden');
+        document.getElementById('newPassword').value = '';
+        
       } catch (error) {
-        alert('Fehler beim Ändern des Passworts: ' + error.message);
+        let errorMessage = 'Fehler beim Ändern des Passworts';
+        
+        switch (error.code) {
+          case 'auth/weak-password':
+            errorMessage = 'Das Passwort ist zu schwach';
+            break;
+          case 'auth/requires-recent-login':
+            errorMessage = 'Bitte logge dich erneut ein und versuche es dann nochmal';
+            break;
+          default:
+            errorMessage = 'Fehler beim Ändern des Passworts: ' + error.message;
+        }
+        
+        showMessage(errorMessage);
+      } finally {
+        loadingSpinner.classList.add('hidden');
       }
     };
+
+    // Check verification status periodically
+    setInterval(async () => {
+      if (auth.currentUser && !auth.currentUser.emailVerified) {
+        try {
+          await reload(auth.currentUser);
+          if (auth.currentUser.emailVerified) {
+            updateUserStatus(auth.currentUser);
+            showMessage('E-Mail-Adresse erfolgreich verifiziert!', 'success');
+          }
+        } catch (error) {
+          // Ignore errors in background check
+        }
+      }
+    }, 10000); // Check every 10 seconds
   </script>
 </body>
 </html>
