@@ -3,249 +3,109 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Acodemy | Login</title>
-
-  <!-- Inter & Material Icons -->
+  <title>Acodemy | Login</title>
+  <!-- Google Fonts + Material Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 
   <style>
     :root {
-      --bg-primary: #fff;
-      --bg-secondary: #f8fafc;
-      --text-primary: #1e293b;
-      --text-secondary: #64748b;
-      --border: #e2e8f0;
-      --accent: #3b82f6;
-      --accent-hover: #2563eb;
-      --shadow: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.1);
-      --radius: 1rem;
-      --bw: 4px; /* dickerer Border */
-      --fs-input: 1.125rem;
-      --fs-btn: 1.125rem;
-      --transition: all .3s ease-out;
-      --blur: blur(1px);
+      --bg-primary:#fff; --bg-secondary:#f8fafc;
+      --text-primary:#1e293b; --text-secondary:#64748b;
+      --border:#e2e8f0; --accent:#3b82f6; --accent-hover:#2563eb;
+      --shadow:0 10px 15px rgba(0,0,0,0.1),0 4px 6px rgba(0,0,0,0.1);
+      --radius:1rem; --bw:4px; --fs-input:1.125rem; --fs-btn:1.125rem;
     }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;background:var(--bg-secondary);font-family:'Inter',sans-serif}
+    .hidden{display:none!important}
 
-    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
-    html, body { height:100%; background:var(--bg-secondary); font-family:'Inter',sans-serif; }
-    .hidden { display:none!important; }
-
-    /* Basis-Panel für Login */
-    .panel {
-      max-width:400px;
-      width:90%;
-      margin:10px auto 20px;
-      padding:1rem 1.5rem 2rem;
-      background:var(--bg-primary);
-      border:var(--bw) solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      display:flex; flex-direction:column; align-items:center;
-      transition:var(--transition);
-    }
-
-    /* Einfacher Logo-Container */
-    .logo-container {
-      margin-bottom:-1rem;
-      text-align:center;
-    }
-
-    .logo-container img {
-      max-height:110px;
-      width:auto;
-      display:inline-block;
-      transition:var(--transition);
-    }
-
-    /* Überschrift */
-    h2 {
-      font-size:1.75rem;
-      color:var(--text-primary);
-      margin-bottom:.75rem;
-    }
-
-    /* Formular: E-Mail & Passwort */
-    .auth-form {
-      width:100%;
-      display:flex;
-      flex-direction:column;
-      gap:.75rem;
-      margin-bottom:.75rem;
-    }
-
-    .form-input {
-      font-size:var(--fs-input);
-      padding:.75rem 1rem;
-      border:var(--bw) solid var(--border);
-      border-radius:var(--radius);
-      background:var(--bg-secondary);
-      color:var(--text-primary);
-      transition:var(--transition);
-    }
-
-    .form-input:focus { outline:none; }
-    .form-input:active { filter:var(--blur); }
-
-    .pwd-wrapper {
-      position:relative;
-    }
-
-    .pwd-wrapper input {
-      padding-right:4rem; /* Platz für Button */
-    }
-
-    .pwd-toggle {
-      position:absolute;
-      top:50%;
-      right:1rem;
-      transform:translateY(-50%);
-      background:none;
-      border:none;
-      font-size:.9rem;
-      color:var(--accent);
-      cursor:pointer;
-      transition:var(--transition);
-    }
-
-    .forgot-link {
-      text-align:center;
-      font-size:.875rem;
-      color:var(--accent);
-      margin:-.5rem 0 1rem;
-    }
-
-    .primary-btn {
-      font-size:var(--fs-btn);
-      padding:.75rem;
-      width:100%;
-      background:var(--accent);
-      color:#fff;
-      border:none;
-      border-radius:var(--radius);
-      cursor:pointer;
-      transition:var(--transition);
-    }
-
-    .primary-btn:focus { outline:none; }
-    .primary-btn:active { filter:var(--blur); }
-    .primary-btn:hover { background:var(--accent-hover); }
-
-    /* Separator „ODER“ */
-    .separator {
-      width:100%;
-      text-align:center;
-      font-size:.875rem;
-      color:var(--text-secondary);
-      margin:.75rem 0;
-      position:relative;
-    }
-
-    .separator::before,
-    .separator::after {
-      content:"";
-      position:absolute;
-      top:50%;
-      width:40%;
-      height:1px;
-      background:var(--border);
-    }
-
-    .separator::before { left:0; }
-    .separator::after  { right:0; }
-    .separator span {
-      padding:0 .5rem;
-      background:var(--bg-primary);
-      position:relative;
-    }
-
-    /* Social-Login Buttons */
-    .social-btns {
-      width:100%;
-      display:flex;
-      flex-direction:column;
-      gap:.75rem;
-      margin-bottom:1rem;
-    }
-
-    .social-btn {
-      display:flex;
+    .panel{
+      max-width:400px;width:90%;margin:20px auto;
+      padding:1.5rem 2rem;background:var(--bg-primary);
+      border:var(--bw) solid var(--border);border-radius:var(--radius);
+      box-shadow:var(--shadow);display:flex;flex-direction:column;
       align-items:center;
-      gap:.75rem;
-      font-size:var(--fs-btn);
-      padding:.75rem 1rem;
-      width:100%;
-      border:var(--bw) solid var(--border);
-      border-radius:var(--radius);
+    }
+
+    .logo-container{margin-bottom:1rem;text-align:center}
+    .logo-container img{height:110px;width:auto}
+
+    h2{font-size:1.75rem;color:var(--text-primary);margin-bottom:1rem}
+
+    .auth-form{width:100%;display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1rem}
+    .form-input{
+      font-size:var(--fs-input);padding:0.75rem 1rem;
+      border:var(--bw) solid var(--border);border-radius:var(--radius);
+      background:var(--bg-secondary);color:var(--text-primary);
+    }
+    .pwd-wrapper{position:relative}
+    .pwd-wrapper input{padding-right:4rem}
+    .pwd-toggle{
+      position:absolute;top:50%;right:1rem;transform:translateY(-50%);
+      background:none;border:none;color:var(--accent);cursor:pointer;
+    }
+    .forgot-link{
+      text-align:center;color:var(--accent);font-size:0.875rem;
+      margin:-0.5rem 0 1rem;
+    }
+    .primary-btn{
+      width:100%;padding:0.75rem;background:var(--accent);
+      color:#fff;border:none;border-radius:var(--radius);
+      font-size:var(--fs-btn);cursor:pointer;
+    }
+    .primary-btn:hover{background:var(--accent-hover)}
+
+    .separator{width:100%;text-align:center;position:relative;margin:1rem 0;color:var(--text-secondary)}
+    .separator::before,.separator::after{
+      content:"";position:absolute;top:50%;width:40%;height:1px;background:var(--border);
+    }
+    .separator::before{left:0} .separator::after{right:0}
+    .separator span{background:var(--bg-primary);padding:0 0.5rem;position:relative}
+
+    .social-btns{width:100%;display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1rem}
+    .social-btn{
+      display:flex;align-items:center;gap:0.75rem;
+      padding:0.75rem;border:var(--bw) solid var(--border);
+      border-radius:var(--radius);cursor:pointer;transition:0.3s;
       background:var(--bg-primary);
-      cursor:pointer;
-      transition:var(--transition);
     }
+    .social-btn.google{border-color:#4285f4;color:#4285f4}
+    .social-btn.google:hover{background:#4285f4;color:#fff}
+    .social-btn.github{border-color:#333;color:#333}
+    .social-btn.github:hover{background:#333;color:#fff}
 
-    .social-btn:focus { outline:none; }
-    .social-btn:active { filter:var(--blur); }
+    .icon{width:24px;height:24px;background-size:contain;background-repeat:no-repeat}
+    .google-icon{background-image:url("https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg")}
+    .github-icon{background-image:url("https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png")}
 
-    .social-btn.google {
-      border-color:#4285f4;
-      color:#4285f4;
+    .form-switch-text{font-size:0.9rem;color:var(--text-secondary)}
+    .form-switch-text a{color:var(--accent);text-decoration:none;font-weight:500;margin:0 0.5rem}
+
+    /* Overlay für E-Mail-Verifikation */
+    #verificationOverlay{
+      display:none;position:fixed;top:0;left:0;width:100%;
+      background:#fff3cd;color:#856404;padding:0.75rem;text-align:center;
+      font-size:0.95rem;cursor:pointer;z-index:1000;
     }
-
-    .social-btn.google:hover {
-      background:#4285f4;
-      color:#fff;
-    }
-
-    .social-btn.github {
-      border-color:#333;
-      color:#333;
-    }
-
-    .social-btn.github:hover {
-      background:#333;
-      color:#fff;
-    }
-
-    .social-btn .icon {
-      width:24px;
-      height:24px;
-      flex-shrink:0;
-      background-size:contain;
-      background-repeat:no-repeat;
-      background-position:center;
-    }
-
-    .google-icon {
-      background-image:url("https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg");
-    }
-
-    .github-icon {
-      background-image:url("https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png");
-    }
-
-    /* Registrieren/Anmelden Toggle */
-    .form-switch-text {
-      font-size:.9rem;
-      color:var(--text-secondary);
-    }
-
-    .form-switch-text a {
-      color:var(--accent);
-      text-decoration:none;
-      font-weight:500;
-      margin:0 .5rem;
+    #verificationOverlay.success{
+      background:#d4edda;color:#155724;
     }
   </style>
 </head>
-
 <body>
-  <!-- LOGIN SCREEN -->
-  <div id="loginScreen" class="panel">
+
+  <div id="verificationOverlay">
+    Bitte verifiziere deine E‑Mail-Adresse (Klick zum Senden)
+  </div>
+
+  <div id="loginPanel" class="panel">
     <div class="logo-container">
-      <img src="assets/images/logo.png" alt="Codegame Logo">
+      <img src="assets/images/logo.png" alt="Acodemy Logo">
     </div>
     <h2 id="formTitle">Anmelden</h2>
     <form id="authForm" class="auth-form">
-      <input type="email" id="email" class="form-input" placeholder="E-Mail" required>
+      <input type="email" id="email" class="form-input" placeholder="E‑Mail" required>
       <div class="pwd-wrapper">
         <input type="password" id="password" class="form-input" placeholder="Passwort" required>
         <button type="button" id="togglePassword" class="pwd-toggle">Anzeigen</button>
@@ -256,29 +116,31 @@
     <div class="separator"><span>ODER</span></div>
     <div class="social-btns">
       <button id="googleLogin" class="social-btn google">
-        <div class="icon google-icon"></div>
-        Mit Google anmelden
+        <div class="icon google-icon"></div>Mit Google anmelden
       </button>
       <button id="githubLogin" class="social-btn github">
-        <div class="icon github-icon"></div>
-        Mit GitHub anmelden
+        <div class="icon github-icon"></div>Mit GitHub anmelden
       </button>
     </div>
     <p class="form-switch-text">
       <span id="loginPrompt">Noch kein Konto?</span>
       <a href="#" id="toggleSignup">Registrieren</a>
-      <span id="registerPrompt" class="hidden">Bereits ein Konto?</span>
+      <span id="registerPrompt" class="hidden">Bereits registriert?</span>
       <a href="#" id="toggleSignin" class="hidden">Anmelden</a>
     </p>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+    import {
+      getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider,
+      signInWithEmailAndPassword, createUserWithEmailAndPassword,
+      sendPasswordResetEmail, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-    // Firebase Configuration (API Key)
+    // Firebase-Konfig
     const firebaseConfig = {
-      apiKey: "AIzaSyDrbeHimI43xjAaw-PvxtZUDh0v3bZA4XQ",  // Deine API Key hier
+      apiKey: "AIzaSyDrbeHimI43xjAaw-PvxtZUDh0v3bZA4XQ",
       authDomain: "codegame-dev.firebaseapp.com",
       projectId: "codegame-dev",
       storageBucket: "codegame-dev.firebasestorage.app",
@@ -286,76 +148,88 @@
       appId: "1:787254922496:web:e4728c517363197eb7f7e5",
       measurementId: "G-R3X0TKGNZV"
     };
-
-    const app = initializeApp(firebaseConfig);
+    const app  = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-
     const googleProvider = new GoogleAuthProvider();
     const githubProvider = new GithubAuthProvider();
 
-    // Login/Signup toggle functionality
+    // Overlay-Funktion
+    const overlay = document.getElementById('verificationOverlay');
+    const showOverlay = (msg, success=false) => {
+      overlay.textContent = msg;
+      overlay.classList.toggle('success', success);
+      overlay.style.display = 'block';
+    };
+    overlay.onclick = async () => {
+      try {
+        await auth.currentUser.sendEmailVerification();
+        showOverlay('Verifizierungs‑Mail gesendet!', true);
+        setTimeout(() => overlay.style.display='none', 3000);
+      } catch(e) {
+        alert('Fehler: '+e.message);
+      }
+    };
+
+    // Toggle Login/Signup
     let isSignup = false;
-    const updateToggleUI = () => {
+    const updUI = ()=> {
       document.getElementById('loginPrompt').classList.toggle('hidden', isSignup);
       document.getElementById('toggleSignup').classList.toggle('hidden', isSignup);
       document.getElementById('registerPrompt').classList.toggle('hidden', !isSignup);
       document.getElementById('toggleSignin').classList.toggle('hidden', !isSignup);
-      document.getElementById('formTitle').textContent = isSignup ? 'Registrieren' : 'Anmelden';
-      document.getElementById('submitBtn').textContent  = isSignup ? 'Registrieren' : 'Anmelden';
+      document.getElementById('formTitle').textContent = isSignup?'Registrieren':'Anmelden';
+      document.getElementById('submitBtn').textContent = isSignup?'Registrieren':'Anmelden';
     };
-    document.getElementById('toggleSignup').onclick = e => { e.preventDefault(); isSignup = true; updateToggleUI(); };
-    document.getElementById('toggleSignin').onclick = e => { e.preventDefault(); isSignup = false; updateToggleUI(); };
-    updateToggleUI();
+    document.getElementById('toggleSignup').onclick = e=>{e.preventDefault();isSignup=true;updUI()};
+    document.getElementById('toggleSignin').onclick = e=>{e.preventDefault();isSignup=false;updUI()};
+    updUI();
 
-    // Social Login (Google, GitHub)
-    document.getElementById('googleLogin').onclick = () => {
-      signInWithPopup(auth, googleProvider).catch(e => alert('Google-Login fehlgeschlagen:\n' + e.message));
-    };
-    document.getElementById('githubLogin').onclick = () => {
-      signInWithPopup(auth, githubProvider).catch(e => alert('GitHub-Login fehlgeschlagen:\n' + e.message));
-    };
+    // Social Login
+    document.getElementById('googleLogin').onclick = ()=>signInWithPopup(auth,googleProvider).catch(e=>alert(e.message));
+    document.getElementById('githubLogin').onclick = ()=>signInWithPopup(auth,githubProvider).catch(e=>alert(e.message));
 
-    // Email/Password Login or Signup
+    // E-Mail/Passwort Auth
     document.getElementById('authForm').onsubmit = async e => {
       e.preventDefault();
-      const email = e.target.email.value.trim();
-      const pw    = e.target.password.value;
+      const email = e.target.email.value.trim(), pw = e.target.password.value;
       try {
-        if (isSignup) await createUserWithEmailAndPassword(auth, email, pw);
-        else           await signInWithEmailAndPassword(auth, email, pw);
-      } catch (err) {
-        alert((isSignup ? 'Registrierung' : 'Login') + ' fehlgeschlagen:\n' + err.message);
+        let cred = isSignup
+          ? await createUserWithEmailAndPassword(auth,email,pw)
+          : await signInWithEmailAndPassword(auth,email,pw);
+        // E-Mail verifizieren bei Signup
+        if (isSignup) {
+          await cred.user.sendEmailVerification();
+          showOverlay('Verifizierungs‑Mail gesendet!', true);
+          return;
+        }
+      } catch(err) {
+        alert(err.message);
       }
     };
 
-    // Password visibility toggle
+    // Passwort anzeigen/verbergen
     document.getElementById('togglePassword').onclick = () => {
-      const pw  = document.getElementById('password');
-      const btn = document.getElementById('togglePassword');
-      if (pw.type === 'password') { pw.type = 'text'; btn.textContent = 'Verbergen'; }
-      else                         { pw.type = 'password'; btn.textContent = 'Anzeigen'; }
+      const pw = document.getElementById('password'), btn = document.getElementById('togglePassword');
+      if (pw.type==='password'){pw.type='text';btn.textContent='Verbergen'}
+      else{pw.type='password';btn.textContent='Anzeigen'}
     };
 
-    // Password Reset
+    // Passwort-Reset
     document.getElementById('forgotPassword').onclick = async e => {
       e.preventDefault();
       const mail = document.getElementById('email').value.trim();
-      if (!mail) return alert('Bitte E-Mail eingeben');
-      try {
-        await sendPasswordResetEmail(auth, mail);
-        alert('Reset-Mail gesendet');
-      } catch (err) {
-        alert('Fehler:\n' + err.message);
-      }
+      if (!mail) return alert('Bitte E‑Mail eingeben');
+      try{await sendPasswordResetEmail(auth,mail);alert('Reset-Mail gesendet')}catch(e){alert(e.message)}
     };
 
-    // Auth State Listener (Check if logged in)
-    onAuthStateChanged(auth, user => {
+    // Auth-Status & Verifikation prüfen
+    onAuthStateChanged(auth,user=>{
       if (user) {
-        window.location.href = 'dashboard.html';  // Redirect to dashboard if logged in
-      } else {
-        document.getElementById('loginScreen').classList.remove('hidden');
-        document.getElementById('mainScreen').classList.add('hidden');
+        if (user.emailVerified) {
+          location.href = 'dashboard.html';
+        } else {
+          showOverlay('Bitte verifiziere deine E‑Mail-Adresse');
+        }
       }
     });
   </script>
