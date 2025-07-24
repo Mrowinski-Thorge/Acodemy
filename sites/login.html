@@ -143,6 +143,110 @@
       border-color: var(--text-secondary);
     }
 
+    /* Terms Acceptance Styles */
+    .terms-screen {
+      width: 100%;
+      text-align: center;
+    }
+
+    .terms-content {
+      margin: 2rem 0;
+      text-align: left;
+    }
+
+    .terms-text {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      transition: var(--transition);
+    }
+
+    .checkbox-container:hover {
+      background: var(--bg-secondary);
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      margin: 0;
+      transform: scale(1.2);
+      accent-color: var(--accent);
+    }
+
+    .checkbox-text {
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .checkbox-text a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .checkbox-text a:hover {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
+
+    .terms-buttons {
+      display: flex;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      padding: 0.75rem;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-size: var(--fs-btn);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+
+    .btn-primary {
+      flex: 1;
+      padding: 0.75rem;
+      background: var(--accent);
+      color: white;
+      border: 2px solid var(--accent);
+      border-radius: var(--radius);
+      font-size: var(--fs-btn);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: var(--text-secondary);
+      border-color: var(--text-secondary);
+    }
+
     /* Auth Form Styles */
     .auth-form{width:100%;display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1rem;margin-top:2rem}
     .form-input{
@@ -249,28 +353,8 @@
       <img src="../assets/images/logo.png" alt="Acodemy Logo" onerror="this.style.display='none'">
     </div>
 
-    <!-- Terms Acceptance Screen -->
-    <div id="termsScreen" class="terms-screen">
-      <h2>Willkommen bei Acodemy!</h2>
-      
-      <div class="terms-content">
-        <label class="checkbox-container" for="termsCheckbox">
-          <input type="checkbox" id="termsCheckbox">
-          <div class="checkbox-text">
-            Ich stimme den <a href="terms.html" target="_blank">Nutzungsbedingungen</a> und der 
-            <a href="privacy.html" target="_blank">Datenschutzerklärung</a> zu und bin mindestens 13 Jahre alt.
-          </div>
-        </label>
-      </div>
-      
-      <div class="terms-buttons">
-        <button type="button" class="btn-secondary" id="backToHome">Zurück</button>
-        <button type="button" class="btn-primary" id="acceptTerms" disabled>Weiter</button>
-      </div>
-    </div>
-
     <!-- Login/Register Screen -->
-    <div id="authScreen" class="hidden">
+    <div id="authScreen">
       <h2 id="formTitle">Anmelden</h2>
       
       <div id="errorMessage" class="error-message hidden"></div>
@@ -305,6 +389,15 @@
         <span id="registerPrompt" class="hidden">Bereits registriert?</span>
         <a href="#" id="toggleSignin" class="hidden">Anmelden</a>
       </p>
+      
+      <!-- Terms Notice -->
+      <div style="margin-top: 1rem; padding: 0.75rem; background: var(--bg-secondary); border-radius: 0.5rem; border: 1px solid var(--border);">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); text-align: center; line-height: 1.4;">
+          Mit der Nutzung unserer Services stimmen Sie unseren 
+          <a href="terms.html" target="_blank" style="color: var(--accent); text-decoration: none;">Nutzungsbedingungen</a> und der 
+          <a href="privacy.html" target="_blank" style="color: var(--accent); text-decoration: none;">Datenschutzerklärung</a> zu.
+        </p>
+      </div>
     </div>
   </div>
 
@@ -333,30 +426,10 @@
     const githubProvider = new GithubAuthProvider();
 
     // UI Elements
-    const termsScreen = document.getElementById('termsScreen');
-    const authScreen = document.getElementById('authScreen');
-    const termsCheckbox = document.getElementById('termsCheckbox');
-    const acceptTermsBtn = document.getElementById('acceptTerms');
-    const backToHomeBtn = document.getElementById('backToHome');
     const errorDiv = document.getElementById('errorMessage');
     const submitBtn = document.getElementById('submitBtn');
     const btnText = document.getElementById('btnText');
     const btnLoading = document.getElementById('btnLoading');
-
-    // Check if user just registered or is returning
-    const justRegistered = sessionStorage.getItem('acodemy-just-registered') === 'true';
-    const isReturningUser = localStorage.getItem('acodemy-returning-user') === 'true';
-    
-    // Always show terms for new registrations, skip for returning users
-    if (justRegistered || (!isReturningUser && localStorage.getItem('acodemy-terms-accepted') !== 'true')) {
-      // Show terms screen
-      termsScreen.classList.remove('hidden');
-      authScreen.classList.add('hidden');
-    } else {
-      // Skip terms for returning users
-      termsScreen.classList.add('hidden');
-      authScreen.classList.remove('hidden');
-    }
 
     // Terms checkbox handling
     termsCheckbox.addEventListener('change', function() {
@@ -366,8 +439,6 @@
     // Accept terms
     acceptTermsBtn.addEventListener('click', function() {
       localStorage.setItem('acodemy-terms-accepted', 'true');
-      localStorage.setItem('acodemy-returning-user', 'true'); // Mark as returning user
-      sessionStorage.removeItem('acodemy-just-registered'); // Clear registration flag
       termsScreen.classList.add('hidden');
       authScreen.classList.remove('hidden');
     });
@@ -421,16 +492,8 @@
 
     updateUI();
 
-    // Social Login - Always check terms for new users
+    // Social Login - Simplified
     document.getElementById('googleLogin').onclick = async () => {
-      // For social login, always check terms first if not a returning user
-      if (!localStorage.getItem('acodemy-returning-user')) {
-        sessionStorage.setItem('acodemy-just-registered', 'true');
-        termsScreen.classList.remove('hidden');
-        authScreen.classList.add('hidden');
-        return;
-      }
-      
       try {
         hideError();
         await signInWithPopup(auth, googleProvider);
@@ -440,14 +503,6 @@
     };
 
     document.getElementById('githubLogin').onclick = async () => {
-      // For social login, always check terms first if not a returning user
-      if (!localStorage.getItem('acodemy-returning-user')) {
-        sessionStorage.setItem('acodemy-just-registered', 'true');
-        termsScreen.classList.remove('hidden');
-        authScreen.classList.add('hidden');
-        return;
-      }
-      
       try {
         hideError();
         await signInWithPopup(auth, githubProvider);
@@ -474,12 +529,8 @@
         if (isSignup) {
           const credential = await createUserWithEmailAndPassword(auth, email, password);
           await credential.user.sendEmailVerification();
-          // Mark as just registered to show terms on next login
-          sessionStorage.setItem('acodemy-just-registered', 'true');
         } else {
           await signInWithEmailAndPassword(auth, email, password);
-          // Mark as returning user for future logins
-          localStorage.setItem('acodemy-returning-user', 'true');
         }
       } catch (error) {
         let errorMessage = 'Ein Fehler ist aufgetreten';
