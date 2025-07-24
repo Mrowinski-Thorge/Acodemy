@@ -291,6 +291,18 @@
     <span id="overlayLoading" class="loading hidden"></span>
   </div>
 
+  <!-- Mobile-only message -->
+  <div class="mobile-only-message">
+    <div class="content">
+      <span class="icon">💻</span>
+      <h3>Desktop erforderlich</h3>
+      <p>Acodemy wurde für die optimale Lernerfahrung auf Desktop-Computern entwickelt. Bitte verwende einen Computer oder Laptop, um auf alle Funktionen zugreifen zu können.</p>
+      <button class="mobile-logout" id="mobileLogoutBtn">
+        <span>Ausloggen</span>
+      </button>
+    </div>
+  </div>
+
   <div id="mainScreen" class="panel">
     <div class="logo-container">
       <img src="../assets/images/logo.png" alt="Acodemy Logo" onerror="this.style.display='none'">
@@ -397,12 +409,10 @@
     };
 
     // Overlay click handler - Send verification email
+    let hasEmailBeenSent = false;
+    
     overlay.onclick = async () => {
       if (!auth.currentUser || auth.currentUser.emailVerified) return;
-      
-      // Only show for email/password users
-      const isEmailPasswordUser = auth.currentUser.providerData.some(provider => provider.providerId === 'password');
-      if (!isEmailPasswordUser) return;
       
       try {
         overlayText.textContent = 'Sende Verifikations-E-Mail...';
@@ -412,9 +422,9 @@
         
         overlayLoading.classList.add('hidden');
         overlayText.textContent = 'E-Mail wurde versendet';
-        // Banner bleibt gelb (success = false)
+        hasEmailBeenSent = true;
         
-        // Nach 5 Sekunden zurück zum ursprünglichen Text
+        // Nach 5 Sekunden zum "erneut senden" Text
         setTimeout(() => {
           showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)');
         }, 5000);
@@ -422,7 +432,11 @@
       } catch (error) {
         overlayLoading.classList.add('hidden');
         showMessage('Fehler beim Senden der Verifikations-E-Mail: ' + error.message);
-        showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)');
+        if (hasEmailBeenSent) {
+          showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)');
+        } else {
+          showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum Senden)');
+        }
       }
     };
 
@@ -436,12 +450,10 @@
       verificationStatus.textContent = isVerified ? 'E-Mail verifiziert ✓' : 'E-Mail nicht verifiziert';
       verificationStatus.className = `verification-status ${isVerified ? 'verified' : 'unverified'}`;
       
-      // Show overlay only for email/password users who are not verified
-      const isEmailPasswordUser = user.providerData.some(provider => provider.providerId === 'password');
-      
-      if (!isVerified && isEmailPasswordUser) {
-        showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)');
-      } else if (isVerified || !isEmailPasswordUser) {
+      // Show overlay for all non-verified users
+      if (!isVerified) {
+        showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum Senden)');
+      } else {
         hideOverlay();
       }
     };
@@ -460,17 +472,17 @@
       try {
         await reload(user);
         updateUserStatus(auth.currentUser);
-        // Initialize lastVerificationStatus after first load
-        const isEmailPasswordUser = auth.currentUser.providerData.some(provider => provider.providerId === 'password');
-        if (isEmailPasswordUser) {
-          lastVerificationStatus = auth.currentUser.emailVerified;
+        // Initialize lastVerificationStatus and start checker if needed
+        lastVerificationStatus = auth.currentUser.emailVerified;
+        if (!auth.currentUser.emailVerified) {
+          startVerificationChecker();
         }
       } catch (error) {
         console.error('Error reloading user:', error);
         updateUserStatus(user);
-        const isEmailPasswordUser = user.providerData.some(provider => provider.providerId === 'password');
-        if (isEmailPasswordUser) {
-          lastVerificationStatus = user.emailVerified;
+        lastVerificationStatus = user.emailVerified;
+        if (!user.emailVerified) {
+          startVerificationChecker();
         }
       }
     });
@@ -487,6 +499,15 @@
         }
       }, 1000);
     }
+
+    // Mobile logout button
+    document.getElementById('mobileLogoutBtn').onclick = async () => {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        console.error('Logout error:', error);
+      }
+    };
 
     // Logout
     document.getElementById('logoutBtn').onclick = async () => {
@@ -627,15 +648,15 @@
       }
     };
 
-    // Check verification status periodically
+    // Check verification status periodically - only for unverified users
     let lastVerificationStatus = null;
+    let verificationChecker = null;
     
-    setInterval(async () => {
-      if (auth.currentUser) {
-        // Only check for email/password users
-        const isEmailPasswordUser = auth.currentUser.providerData.some(provider => provider.providerId === 'password');
-        
-        if (isEmailPasswordUser && !auth.currentUser.emailVerified) {
+    const startVerificationChecker = () => {
+      if (verificationChecker) clearInterval(verificationChecker);
+      
+      verificationChecker = setInterval(async () => {
+        if (auth.currentUser && !auth.currentUser.emailVerified) {
           try {
             await reload(auth.currentUser);
             const currentVerificationStatus = auth.currentUser.emailVerified;
@@ -646,9 +667,10 @@
               showOverlay('E-Mail erfolgreich verifiziert!', true);
               updateUserStatus(auth.currentUser);
               
-              // Hide banner after 8 seconds
+              // Hide banner after 8 seconds and stop checking
               setTimeout(() => {
                 hideOverlay();
+                clearInterval(verificationChecker);
               }, 8000);
             }
             
@@ -656,9 +678,12 @@
           } catch (error) {
             // Ignore errors in background check
           }
+        } else {
+          // User is verified, stop checking
+          clearInterval(verificationChecker);
         }
-      }
-    }, 10000); // Check every 10 seconds
+      }, 10000); // Check every 10 seconds
+    };
   </script>
 </body>
 </html>
