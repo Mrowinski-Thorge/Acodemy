@@ -243,7 +243,7 @@
 
     // Toggle Login/Signup
     let isSignup = false;
-    const updateUI = () => {
+    const updUI = () => {
       document.getElementById('loginPrompt').classList.toggle('hidden', isSignup);
       document.getElementById('toggleSignup').classList.toggle('hidden', isSignup);
       document.getElementById('registerPrompt').classList.toggle('hidden', !isSignup);
@@ -253,46 +253,31 @@
       hideError();
     };
 
-    document.getElementById('toggleSignup').onclick = (e) => {
+    document.getElementById('toggleSignup').onclick = e => {
       e.preventDefault();
       isSignup = true;
-      updateUI();
+      updUI();
     };
 
-    document.getElementById('toggleSignin').onclick = (e) => {
+    document.getElementById('toggleSignin').onclick = e => {
       e.preventDefault();
       isSignup = false;
-      updateUI();
+      updUI();
     };
 
-    updateUI();
+    updUI();
 
     // Social Login
-    document.getElementById('googleLogin').onclick = async () => {
-      try {
-        hideError();
-        await signInWithPopup(auth, googleProvider);
-      } catch (error) {
-        showError('Google-Anmeldung fehlgeschlagen: ' + error.message);
-      }
-    };
-
-    document.getElementById('githubLogin').onclick = async () => {
-      try {
-        hideError();
-        await signInWithPopup(auth, githubProvider);
-      } catch (error) {
-        showError('GitHub-Anmeldung fehlgeschlagen: ' + error.message);
-      }
-    };
+    document.getElementById('googleLogin').onclick = () => signInWithPopup(auth, googleProvider).catch(e => showError('Google-Anmeldung fehlgeschlagen: ' + e.message));
+    document.getElementById('githubLogin').onclick = () => signInWithPopup(auth, githubProvider).catch(e => showError('GitHub-Anmeldung fehlgeschlagen: ' + e.message));
 
     // E-Mail/Passwort Auth
-    document.getElementById('authForm').onsubmit = async (e) => {
+    document.getElementById('authForm').onsubmit = async e => {
       e.preventDefault();
       const email = e.target.email.value.trim();
-      const password = e.target.password.value;
-
-      if (!email || !password) {
+      const pw = e.target.password.value;
+      
+      if (!email || !pw) {
         showError('Bitte alle Felder ausfüllen');
         return;
       }
@@ -300,37 +285,25 @@
       try {
         hideError();
         setLoading(true);
-
+        
+        let cred = isSignup
+          ? await createUserWithEmailAndPassword(auth, email, pw)
+          : await signInWithEmailAndPassword(auth, email, pw);
+          
         if (isSignup) {
-          const credential = await createUserWithEmailAndPassword(auth, email, password);
-          await credential.user.sendEmailVerification();
-        } else {
-          await signInWithEmailAndPassword(auth, email, password);
+          await cred.user.sendEmailVerification();
         }
-      } catch (error) {
+      } catch(err) {
         let errorMessage = 'Ein Fehler ist aufgetreten';
-        
-        switch (error.code) {
-          case 'auth/email-already-in-use':
-            errorMessage = 'Diese E-Mail wird bereits verwendet';
-            break;
-          case 'auth/weak-password':
-            errorMessage = 'Das Passwort ist zu schwach';
-            break;
+        switch (err.code) {
+          case 'auth/email-already-in-use': errorMessage = 'Diese E-Mail wird bereits verwendet'; break;
+          case 'auth/weak-password': errorMessage = 'Das Passwort ist zu schwach'; break;
           case 'auth/user-not-found':
-          case 'auth/wrong-password':
-            errorMessage = 'Ungültige E-Mail oder Passwort';
-            break;
-          case 'auth/invalid-email':
-            errorMessage = 'Ungültige E-Mail-Adresse';
-            break;
-          case 'auth/too-many-requests':
-            errorMessage = 'Zu viele Versuche. Bitte später erneut versuchen.';
-            break;
-          default:
-            errorMessage = error.message;
+          case 'auth/wrong-password': errorMessage = 'Ungültige E-Mail oder Passwort'; break;
+          case 'auth/invalid-email': errorMessage = 'Ungültige E-Mail-Adresse'; break;
+          case 'auth/too-many-requests': errorMessage = 'Zu viele Versuche. Bitte später erneut versuchen.'; break;
+          default: errorMessage = err.message;
         }
-        
         showError(errorMessage);
       } finally {
         setLoading(false);
@@ -339,52 +312,45 @@
 
     // Passwort anzeigen/verbergen
     document.getElementById('togglePassword').onclick = () => {
-      const pwInput = document.getElementById('password');
-      const toggleBtn = document.getElementById('togglePassword');
-      
-      if (pwInput.type === 'password') {
-        pwInput.type = 'text';
-        toggleBtn.textContent = 'Verbergen';
+      const pw = document.getElementById('password');
+      const btn = document.getElementById('togglePassword');
+      if (pw.type === 'password') {
+        pw.type = 'text';
+        btn.textContent = 'Verbergen';
       } else {
-        pwInput.type = 'password';
-        toggleBtn.textContent = 'Anzeigen';
+        pw.type = 'password';
+        btn.textContent = 'Anzeigen';
       }
     };
 
     // Passwort-Reset
-    document.getElementById('forgotPassword').onclick = async (e) => {
+    document.getElementById('forgotPassword').onclick = async e => {
       e.preventDefault();
-      const email = document.getElementById('email').value.trim();
+      const mail = document.getElementById('email').value.trim();
+      if (!mail) return showError('Bitte E-Mail eingeben');
       
-      if (!email) {
-        showError('Bitte E-Mail-Adresse eingeben');
-        return;
-      }
-
       try {
-        await sendPasswordResetEmail(auth, email);
-        // Success styling
+        await sendPasswordResetEmail(auth, mail);
         errorDiv.style.background = '#d4edda';
         errorDiv.style.borderColor = '#c3e6cb';
         errorDiv.style.color = '#155724';
-        errorDiv.textContent = 'Passwort-Reset-Mail wurde gesendet';
+        errorDiv.textContent = 'Reset-Mail gesendet';
         errorDiv.classList.remove('hidden');
         setTimeout(() => {
           errorDiv.classList.add('hidden');
-          // Reset error styling
           errorDiv.style.background = '';
           errorDiv.style.borderColor = '';
           errorDiv.style.color = '';
         }, 5000);
-      } catch (error) {
-        showError('Fehler beim Senden der Reset-Mail: ' + error.message);
+      } catch(e) {
+        showError('Fehler: ' + e.message);
       }
     };
 
     // Auth-Status überwachen
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, user => {
       if (user) {
-        window.location.href = 'dashboard.html';
+        location.href = 'dashboard.html';
       }
     });
   </script>
