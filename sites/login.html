@@ -30,7 +30,7 @@
       align-items:center;
     }
 
-    .logo-container{margin-bottom:-1rem;text-align:center}
+    .logo-container{margin-bottom:1rem;text-align:center}
     .logo-container img{
       height:110px;width:auto;
       object-fit:contain;
@@ -39,6 +39,111 @@
 
     h2{font-size:1.75rem;color:var(--text-primary);margin-bottom:-1rem;font-weight:600}
 
+    /* Terms Acceptance Styles */
+    .terms-screen {
+      width: 100%;
+      text-align: center;
+    }
+
+    .terms-content {
+      margin: 2rem 0;
+      text-align: left;
+    }
+
+    .terms-text {
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      transition: var(--transition);
+    }
+
+    .checkbox-container:hover {
+      background: var(--bg-secondary);
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      margin: 0;
+      transform: scale(1.2);
+      accent-color: var(--accent);
+    }
+
+    .checkbox-text {
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .checkbox-text a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .checkbox-text a:hover {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
+
+    .terms-buttons {
+      display: flex;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      padding: 0.75rem;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-size: var(--fs-btn);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .btn-secondary:hover {
+      background: var(--border);
+    }
+
+    .btn-primary {
+      flex: 1;
+      padding: 0.75rem;
+      background: var(--accent);
+      color: white;
+      border: 2px solid var(--accent);
+      border-radius: var(--radius);
+      font-size: var(--fs-btn);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: var(--text-secondary);
+      border-color: var(--text-secondary);
+    }
+
+    /* Auth Form Styles */
     .auth-form{width:100%;display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1rem;margin-top:2rem}
     .form-input{
       font-size:var(--fs-input);padding:0.75rem 1rem;
@@ -112,6 +217,16 @@
       padding:0.75rem;border-radius:var(--radius);margin-bottom:1rem;
       font-size:0.875rem;text-align:center;
     }
+
+    @media (max-width: 768px) {
+      .terms-buttons {
+        flex-direction: column;
+      }
+      
+      .checkbox-container {
+        padding: 0.75rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -120,40 +235,69 @@
     <div class="logo-container">
       <img src="../assets/images/logo.png" alt="Acodemy Logo" onerror="this.style.display='none'">
     </div>
-    <h2 id="formTitle">Anmelden</h2>
-    
-    <div id="errorMessage" class="error-message hidden"></div>
-    
-    <form id="authForm" class="auth-form">
-      <input type="email" id="email" class="form-input" placeholder="E‑Mail" required>
-      <div class="pwd-wrapper">
-        <input type="password" id="password" class="form-input" placeholder="Passwort" required>
-        <button type="button" id="togglePassword" class="pwd-toggle">Anzeigen</button>
+
+    <!-- Terms Acceptance Screen -->
+    <div id="termsScreen" class="terms-screen">
+      <h2>Willkommen bei Acodemy!</h2>
+      
+      <div class="terms-content">
+        <p class="terms-text">
+          Bevor Sie beginnen können, müssen Sie unseren Nutzungsbedingungen und Datenschutzbestimmungen zustimmen. 
+          Diese sind wichtig für die sichere und rechtskonforme Nutzung unserer Lernplattform.
+        </p>
+        
+        <label class="checkbox-container" for="termsCheckbox">
+          <input type="checkbox" id="termsCheckbox">
+          <div class="checkbox-text">
+            Ich stimme den <a href="terms.html" target="_blank">Nutzungsbedingungen</a> und der 
+            <a href="privacy.html" target="_blank">Datenschutzerklärung</a> zu und bin mindestens 13 Jahre alt.
+          </div>
+        </label>
       </div>
-      <a href="#" id="forgotPassword" class="forgot-link">Passwort vergessen?</a>
-      <button type="submit" id="submitBtn" class="primary-btn">
-        <span id="btnText">Anmelden</span>
-        <span id="btnLoading" class="loading hidden"></span>
-      </button>
-    </form>
-    
-    <div class="separator"><span>ODER</span></div>
-    
-    <div class="social-btns">
-      <button id="googleLogin" class="social-btn google">
-        <div class="icon google-icon"></div>Mit Google anmelden
-      </button>
-      <button id="githubLogin" class="social-btn github">
-        <div class="icon github-icon"></div>Mit GitHub anmelden
-      </button>
+      
+      <div class="terms-buttons">
+        <button type="button" class="btn-secondary" id="backToHome">Zurück</button>
+        <button type="button" class="btn-primary" id="acceptTerms" disabled>Weiter</button>
+      </div>
     </div>
-    
-    <p class="form-switch-text">
-      <span id="loginPrompt">Noch kein Konto?</span>
-      <a href="#" id="toggleSignup">Registrieren</a>
-      <span id="registerPrompt" class="hidden">Bereits registriert?</span>
-      <a href="#" id="toggleSignin" class="hidden">Anmelden</a>
-    </p>
+
+    <!-- Login/Register Screen -->
+    <div id="authScreen" class="hidden">
+      <h2 id="formTitle">Anmelden</h2>
+      
+      <div id="errorMessage" class="error-message hidden"></div>
+      
+      <form id="authForm" class="auth-form">
+        <input type="email" id="email" class="form-input" placeholder="E‑Mail" required>
+        <div class="pwd-wrapper">
+          <input type="password" id="password" class="form-input" placeholder="Passwort" required>
+          <button type="button" id="togglePassword" class="pwd-toggle">Anzeigen</button>
+        </div>
+        <a href="#" id="forgotPassword" class="forgot-link">Passwort vergessen?</a>
+        <button type="submit" id="submitBtn" class="primary-btn">
+          <span id="btnText">Anmelden</span>
+          <span id="btnLoading" class="loading hidden"></span>
+        </button>
+      </form>
+      
+      <div class="separator"><span>ODER</span></div>
+      
+      <div class="social-btns">
+        <button id="googleLogin" class="social-btn google">
+          <div class="icon google-icon"></div>Mit Google anmelden
+        </button>
+        <button id="githubLogin" class="social-btn github">
+          <div class="icon github-icon"></div>Mit GitHub anmelden
+        </button>
+      </div>
+      
+      <p class="form-switch-text">
+        <span id="loginPrompt">Noch kein Konto?</span>
+        <a href="#" id="toggleSignup">Registrieren</a>
+        <span id="registerPrompt" class="hidden">Bereits registriert?</span>
+        <a href="#" id="toggleSignin" class="hidden">Anmelden</a>
+      </p>
+    </div>
   </div>
 
   <script type="module">
@@ -181,10 +325,40 @@
     const githubProvider = new GithubAuthProvider();
 
     // UI Elements
+    const termsScreen = document.getElementById('termsScreen');
+    const authScreen = document.getElementById('authScreen');
+    const termsCheckbox = document.getElementById('termsCheckbox');
+    const acceptTermsBtn = document.getElementById('acceptTerms');
+    const backToHomeBtn = document.getElementById('backToHome');
     const errorDiv = document.getElementById('errorMessage');
     const submitBtn = document.getElementById('submitBtn');
     const btnText = document.getElementById('btnText');
     const btnLoading = document.getElementById('btnLoading');
+
+    // Check if terms were already accepted
+    const termsAccepted = localStorage.getItem('acodemy-terms-accepted');
+    
+    if (termsAccepted === 'true') {
+      termsScreen.classList.add('hidden');
+      authScreen.classList.remove('hidden');
+    }
+
+    // Terms checkbox handling
+    termsCheckbox.addEventListener('change', function() {
+      acceptTermsBtn.disabled = !this.checked;
+    });
+
+    // Accept terms
+    acceptTermsBtn.addEventListener('click', function() {
+      localStorage.setItem('acodemy-terms-accepted', 'true');
+      termsScreen.classList.add('hidden');
+      authScreen.classList.remove('hidden');
+    });
+
+    // Back to home
+    backToHomeBtn.addEventListener('click', function() {
+      window.location.href = '../index.html';
+    });
 
     // Error handling
     const showError = (message) => {
@@ -235,7 +409,6 @@
       try {
         hideError();
         await signInWithPopup(auth, googleProvider);
-        // Weiterleitung erfolgt durch onAuthStateChanged
       } catch (error) {
         showError('Google-Anmeldung fehlgeschlagen: ' + error.message);
       }
@@ -245,7 +418,6 @@
       try {
         hideError();
         await signInWithPopup(auth, githubProvider);
-        // Weiterleitung erfolgt durch onAuthStateChanged
       } catch (error) {
         showError('GitHub-Anmeldung fehlgeschlagen: ' + error.message);
       }
@@ -268,12 +440,9 @@
 
         if (isSignup) {
           const credential = await createUserWithEmailAndPassword(auth, email, password);
-          // Bei E-Mail-Registrierung Verifikations-E-Mail senden
           await credential.user.sendEmailVerification();
-          // Weiterleitung erfolgt durch onAuthStateChanged
         } else {
           await signInWithEmailAndPassword(auth, email, password);
-          // Weiterleitung erfolgt durch onAuthStateChanged
         }
       } catch (error) {
         let errorMessage = 'Ein Fehler ist aufgetreten';
@@ -339,7 +508,6 @@
         errorDiv.classList.remove('hidden');
         setTimeout(() => {
           errorDiv.classList.add('hidden');
-          // Reset error styling
           errorDiv.style.background = '';
           errorDiv.style.borderColor = '';
           errorDiv.style.color = '';
@@ -349,10 +517,9 @@
       }
     };
 
-    // Auth-Status überwachen - Direkte Weiterleitung ohne Verifikation beim Login
+    // Auth-Status überwachen
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Sofortige Weiterleitung zum Dashboard
         window.location.href = 'dashboard.html';
       }
     });
