@@ -30,14 +30,14 @@
       align-items:center;
     }
 
-    .logo-container{margin-bottom:-1rem;text-align:center}
+    .logo-container{margin-bottom:1rem;text-align:center}
     .logo-container img{
       height:110px;width:auto;
       object-fit:contain;
       transition:var(--transition);
     }
 
-    h2{font-size:1.75rem;color:var(--text-primary);margin-bottom:-1rem;font-weight:600;text-align:center}
+    h2{font-size:1.75rem;color:var(--text-primary);margin-bottom:1rem;font-weight:600;text-align:center}
 
     /* Terms Acceptance Styles */
     .terms-screen {
@@ -189,7 +189,7 @@
       display:flex;align-items:center;justify-content:center;gap:0.75rem;
       padding:0.75rem;border:var(--bw) solid var(--border);
       border-radius:var(--radius);cursor:pointer;transition:var(--transition);
-      background:var(--bg-primary);font-weight:500;
+      background:var(--bg-primary);font-weight:500;font-size:1rem;
     }
     .social-btn.google{border-color:#4285f4;color:#4285f4}
     .social-btn.google:hover{background:#4285f4;color:#fff;transform:translateY(-1px)}
@@ -330,10 +330,13 @@
     const btnText = document.getElementById('btnText');
     const btnLoading = document.getElementById('btnLoading');
 
+    // Check if user just registered (for terms acceptance)
+    const justRegistered = sessionStorage.getItem('acodemy-just-registered') === 'true';
+    
     // Check if terms were already accepted
     const termsAccepted = localStorage.getItem('acodemy-terms-accepted');
     
-    if (termsAccepted === 'true') {
+    if (termsAccepted === 'true' && !justRegistered) {
       termsScreen.classList.add('hidden');
       authScreen.classList.remove('hidden');
     }
@@ -346,6 +349,7 @@
     // Accept terms
     acceptTermsBtn.addEventListener('click', function() {
       localStorage.setItem('acodemy-terms-accepted', 'true');
+      sessionStorage.removeItem('acodemy-just-registered'); // Clear registration flag
       termsScreen.classList.add('hidden');
       authScreen.classList.remove('hidden');
     });
@@ -399,8 +403,16 @@
 
     updateUI();
 
-    // Social Login
+    // Social Login - Force terms acceptance for new users
     document.getElementById('googleLogin').onclick = async () => {
+      // Check if terms accepted for social login
+      if (localStorage.getItem('acodemy-terms-accepted') !== 'true') {
+        sessionStorage.setItem('acodemy-just-registered', 'true');
+        termsScreen.classList.remove('hidden');
+        authScreen.classList.add('hidden');
+        return;
+      }
+      
       try {
         hideError();
         await signInWithPopup(auth, googleProvider);
@@ -410,6 +422,14 @@
     };
 
     document.getElementById('githubLogin').onclick = async () => {
+      // Check if terms accepted for social login
+      if (localStorage.getItem('acodemy-terms-accepted') !== 'true') {
+        sessionStorage.setItem('acodemy-just-registered', 'true');
+        termsScreen.classList.remove('hidden');
+        authScreen.classList.add('hidden');
+        return;
+      }
+      
       try {
         hideError();
         await signInWithPopup(auth, githubProvider);
@@ -436,6 +456,8 @@
         if (isSignup) {
           const credential = await createUserWithEmailAndPassword(auth, email, password);
           await credential.user.sendEmailVerification();
+          // Mark as just registered to show terms on next login
+          sessionStorage.setItem('acodemy-just-registered', 'true');
         } else {
           await signInWithEmailAndPassword(auth, email, password);
         }
