@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nutzungsbedingungen - Acodemy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #fff;
+      --bg-secondary: #f8fafc;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --border: #e2e8f0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+    }
+
+    .header {
+      background: var(--bg-primary);
+      border-bottom: 2px solid var(--border);
+      padding: 1rem 0;
+    }
+
+    .nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .logo img {
+      height: 40px;
+      width: auto;
+    }
+
+    .back-button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .back-button:hover {
+      background: var(--accent-hover);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .content {
+      background: var(--bg-primary);
+      padding: 3rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .last-updated {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    ul, ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    .highlight {
+      background: #fef3c7;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      border-left: 4px solid #f59e0b;
+      margin: 1.5rem 0;
+    }
+
+    @media (max-width: 768px) {
+      .nav {
+        padding: 0 1rem;
+      }
+      
+      .container {
+        padding: 2rem 1rem;
+      }
+      
+      .content {
+        padding: 2rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a href="../index.html" class="logo">
+        <img src="../assets/images/logo.png" alt="Acodemy Logo" onerror="this.style.display='none'">
+        <span>Acodemy</span>
+      </a>
+      <a href="../index.html" class="back-button">Zurück zur Startseite</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="content">
+      <h1>Nutzungsbedingungen</h1>
+      <p class="last-updated">Letzte Aktualisierung: 24. Juli 2025</p>
+
+      <p>Willkommen bei Acodemy. Mit der Nutzung dieser Plattform erklären Sie sich mit den folgenden Bedingungen einverstanden:</p>
+
+      <h2>1. Zweck der Plattform</h2>
+      <p>Acodemy bietet Nutzern eine Online-Plattform, um Programmieren durch Lernmaterialien, Kurse und interaktive Inhalte zu erlernen und zu vertiefen. Die Plattform umfasst die Nutzung von Hosting-Diensten über GitHub Pages, Nutzer-Authentifizierung mittels Firebase Authentication und Datenspeicherung mit Cloud Firestore.</p>
+
+      <h2>2. Registrierung und Konten</h2>
+      <ul>
+        <li>Nutzer müssen mindestens 13 Jahre alt sein.</li>
+        <li>Bei der Registrierung sind wahrheitsgemäße und vollständige Angaben verpflichtend.</li>
+        <li>Nutzer tragen die Verantwortung für die Geheimhaltung ihrer Zugangsdaten und dürfen diese nicht an Dritte weitergeben.</li>
+        <li>Acodemy behält sich vor, Konten bei Missbrauch oder unrechtmäßiger Nutzung zu sperren oder zu löschen.</li>
+      </ul>
+
+      <h2>3. Pflichten der Nutzer</h2>
+      <ul>
+        <li>Nutzer sind verantwortlich für sämtliche Inhalte, die sie erstellen, hochladen oder teilen.</li>
+        <li>Die Inhalte dürfen keine Urheber-, Marken- oder Persönlichkeitsrechte Dritter verletzen.</li>
+        <li>Unzulässig sind Inhalte, die rechtswidrig, beleidigend, verleumderisch, diskriminierend oder anderweitig unangemessen sind.</li>
+      </ul>
+
+      <h2>4. Lizenz und Nutzungsrechte</h2>
+      <ul>
+        <li>Acodemy gewährt Nutzern ein nicht-exklusives, nicht übertragbares Recht, die Inhalte und Funktionen der Plattform ausschließlich für persönliche, nicht-kommerzielle Zwecke zu nutzen.</li>
+        <li>Nutzer dürfen Inhalte weder vervielfältigen noch Dritten zur Nutzung überlassen.</li>
+      </ul>
+
+      <h2>5. Verbotene Handlungen</h2>
+      <ul>
+        <li>Es ist untersagt, die Plattform für illegale Aktivitäten wie Hacking, Malware-Verbreitung, Spam oder sonstige schädliche Handlungen zu nutzen.</li>
+        <li>Manipulationen oder Versuche, technische Schutzmaßnahmen zu umgehen, sind verboten.</li>
+      </ul>
+
+      <h2>6. Haftungsausschluss</h2>
+      <ul>
+        <li>Acodemy haftet nicht für Schäden, die durch Nutzung, Nichtverfügbarkeit oder technische Probleme entstehen.</li>
+        <li>Acodemy übernimmt keine Verantwortung für Inhalte Dritter, auf die verlinkt wird.</li>
+      </ul>
+
+      <div class="highlight">
+        <strong>Wichtiger Hinweis:</strong> Acodemy behält sich vor, diese Bedingungen jederzeit anzupassen. Änderungen werden rechtzeitig bekannt gegeben.
+      </div>
+
+      <h2>7. Kontakt</h2>
+      <p>Bei Fragen zu diesen Nutzungsbedingungen wenden Sie sich bitte an:</p>
+      <p>
+        <strong>Acodemy</strong><br>
+        E-Mail: info@acodemy.dev<br>
+        Weitere Kontaktdaten finden Sie im <a href="imprint.html" style="color: var(--accent);">Impressum</a>.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
