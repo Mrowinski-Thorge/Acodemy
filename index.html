@@ -1,35 +1,672 @@
 <!DOCTYPE html>
-<html lang="de" data-theme="light">
+<html lang="de">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Acodemy</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acodemy - Lerne spielend einfach Programmieren</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
+    :root {
+      --bg-primary: #fff;
+      --bg-secondary: #f8fafc;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --shadow: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.1);
+      --radius: 1rem;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      margin:0; height:100vh; display:flex;
-      align-items:center; justify-content:center;
-      background:#f8fafc; font-family:'Inter',sans-serif;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--bg-primary);
     }
-    .panel {
-      text-align:center; padding:2rem 3rem;
-      background:#fff; border:4px solid #e2e8f0;
-      border-radius:1rem; box-shadow:0 10px 15px rgba(0,0,0,0.1);
+
+    /* Header */
+    .header {
+      background: var(--bg-primary);
+      border-bottom: 2px solid var(--border);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
-    h1 { font-size:3rem; color:#1e293b; margin-bottom:2rem; }
-    .btn {
-      font-size:1.25rem; padding:1rem 2rem;
-      background:#3b82f6; color:#fff; border:none;
-      border-radius:1rem; text-decoration:none;
-      transition:background .3s ease-out;
+
+    .nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2rem;
     }
-    .btn:hover { background:#2563eb; }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .logo img {
+      height: 40px;
+      width: auto;
+    }
+
+    .nav-button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .nav-button:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+    }
+
+    /* Hero Section */
+    .hero {
+      background: var(--gradient);
+      color: white;
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 2.5rem;
+      opacity: 0.9;
+    }
+
+    .cta-button {
+      background: white;
+      color: var(--accent);
+      border: none;
+      padding: 1rem 2.5rem;
+      border-radius: var(--radius);
+      font-size: 1.125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: var(--shadow);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 25px rgba(0,0,0,0.2);
+    }
+
+    /* What is Acodemy Section */
+    .about-section {
+      padding: 6rem 2rem;
+      background: var(--bg-secondary);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 3rem;
+      color: var(--text-primary);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .feature-card {
+      background: white;
+      padding: 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+    }
+
+    /* Programming Languages Section */
+    .languages-section {
+      padding: 6rem 2rem;
+      background: var(--bg-primary);
+    }
+
+    .languages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 3rem;
+    }
+
+    .language-card {
+      background: var(--bg-secondary);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .language-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+    }
+
+    .language-card.active {
+      border-color: var(--accent);
+      background: white;
+    }
+
+    .language-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .language-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: white;
+    }
+
+    .language-name {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .code-preview {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      line-height: 1.4;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .language-card.active .code-preview {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--text-primary);
+      color: white;
+      padding: 3rem 2rem 2rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .footer-section h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .footer-section p {
+      color: #94a3b8;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .footer-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid #334155;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      text-align: center;
+      color: #94a3b8;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero p {
+        font-size: 1.1rem;
+      }
+      
+      .nav {
+        padding: 0 1rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+      
+      .languages-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="panel">
-    <h1>Acodemy</h1>
-    <a href="sites/login.html" class="btn">Login</a>
-  </div>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav">
+      <div class="logo">
+        <img src="assets/images/logo.png" alt="Acodemy Logo" onerror="this.style.display='none'">
+        <span>Acodemy</span>
+      </div>
+      <a href="sites/login.html" class="nav-button">Login</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Lerne spielend einfach Programmieren</h1>
+      <p>Entdecke die Welt des Programmierens mit interaktiven Lektionen, praktischen Übungen und spielerischen Herausforderungen. Perfekt für Anfänger und Fortgeschrittene.</p>
+      <a href="sites/login.html" class="cta-button">Jetzt starten</a>
+    </div>
+  </section>
+
+  <!-- What is Acodemy Section -->
+  <section class="about-section">
+    <div class="container">
+      <h2 class="section-title">Was ist Acodemy?</h2>
+      <p style="text-align: center; font-size: 1.125rem; color: var(--text-secondary); max-width: 800px; margin: 0 auto;">
+        Acodemy ist eine innovative Lernplattform, die es dir ermöglicht, Programmieren auf eine unterhaltsame und interaktive Weise zu lernen. Mit unserem spielerischen Ansatz wirst du schnell Fortschritte machen.
+      </p>
+      
+      <div class="about-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎮</div>
+          <h3>Spielerisches Lernen</h3>
+          <p>Lerne Programmieren durch spannende Spiele und interaktive Herausforderungen, die dich motiviert halten.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">📚</div>
+          <h3>Strukturierte Kurse</h3>
+          <p>Folge unseren sorgfältig strukturierten Kursen, die dich Schritt für Schritt zum Programmier-Experten machen.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">🏆</div>
+          <h3>Erfolge verfolgen</h3>
+          <p>Verfolge deine Fortschritte, sammle Punkte und erhalte Zertifikate für deine Programmierfähigkeiten.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Programming Languages Section -->
+  <section class="languages-section">
+    <div class="container">
+      <h2 class="section-title">Entdecke Programmiersprachen</h2>
+      <p style="text-align: center; font-size: 1.125rem; color: var(--text-secondary); max-width: 800px; margin: 0 auto;">
+        Wähle eine Programmiersprache aus und sieh dir ein einfaches "Hello World" Beispiel an. Klicke auf eine Karte, um den Code zu sehen!
+      </p>
+      
+      <div class="languages-grid" id="languagesGrid">
+        <!-- JavaScript -->
+        <div class="language-card" data-language="javascript">
+          <div class="language-header">
+            <div class="language-icon" style="background: #f7df1e; color: #000;">JS</div>
+            <div class="language-name">JavaScript</div>
+          </div>
+          <div class="code-preview">
+<pre>// JavaScript Hello World
+console.log("Hello, World!");
+
+// Interaktive Version
+function greetUser(name) {
+    return `Hello, ${name}!`;
+}
+
+console.log(greetUser("Acodemy"));</pre>
+          </div>
+        </div>
+
+        <!-- Python -->
+        <div class="language-card" data-language="python">
+          <div class="language-header">
+            <div class="language-icon" style="background: #3776ab;">PY</div>
+            <div class="language-name">Python</div>
+          </div>
+          <div class="code-preview">
+<pre># Python Hello World
+print("Hello, World!")
+
+# Interaktive Version
+def greet_user(name):
+    return f"Hello, {name}!"
+
+print(greet_user("Acodemy"))</pre>
+          </div>
+        </div>
+
+        <!-- Java -->
+        <div class="language-card" data-language="java">
+          <div class="language-header">
+            <div class="language-icon" style="background: #ed8b00;">JAVA</div>
+            <div class="language-name">Java</div>
+          </div>
+          <div class="code-preview">
+<pre>// Java Hello World
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+        
+        // Interaktive Version
+        greetUser("Acodemy");
+    }
+    
+    public static void greetUser(String name) {
+        System.out.println("Hello, " + name + "!");
+    }
+}</pre>
+          </div>
+        </div>
+
+        <!-- C++ -->
+        <div class="language-card" data-language="cpp">
+          <div class="language-header">
+            <div class="language-icon" style="background: #00599c;">C++</div>
+            <div class="language-name">C++</div>
+          </div>
+          <div class="code-preview">
+<pre>// C++ Hello World
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() {
+    std::cout &lt;&lt; "Hello, World!" &lt;&lt; std::endl;
+    
+    // Interaktive Version
+    std::string name = "Acodemy";
+    std::cout &lt;&lt; "Hello, " &lt;&lt; name &lt;&lt; "!" &lt;&lt; std::endl;
+    
+    return 0;
+}</pre>
+          </div>
+        </div>
+
+        <!-- C# -->
+        <div class="language-card" data-language="csharp">
+          <div class="language-header">
+            <div class="language-icon" style="background: #512bd4;">C#</div>
+            <div class="language-name">C#</div>
+          </div>
+          <div class="code-preview">
+<pre>// C# Hello World
+using System;
+
+class Program {
+    static void Main() {
+        Console.WriteLine("Hello, World!");
+        
+        // Interaktive Version
+        GreetUser("Acodemy");
+    }
+    
+    static void GreetUser(string name) {
+        Console.WriteLine($"Hello, {name}!");
+    }
+}</pre>
+          </div>
+        </div>
+
+        <!-- PHP -->
+        <div class="language-card" data-language="php">
+          <div class="language-header">
+            <div class="language-icon" style="background: #777bb4;">PHP</div>
+            <div class="language-name">PHP</div>
+          </div>
+          <div class="code-preview">
+<pre>&lt;?php
+// PHP Hello World
+echo "Hello, World!";
+
+// Interaktive Version
+function greetUser($name) {
+    return "Hello, " . $name . "!";
+}
+
+echo greetUser("Acodemy");
+?&gt;</pre>
+          </div>
+        </div>
+
+        <!-- Ruby -->
+        <div class="language-card" data-language="ruby">
+          <div class="language-header">
+            <div class="language-icon" style="background: #cc342d;">RB</div>
+            <div class="language-name">Ruby</div>
+          </div>
+          <div class="code-preview">
+<pre># Ruby Hello World
+puts "Hello, World!"
+
+# Interaktive Version
+def greet_user(name)
+  "Hello, #{name}!"
+end
+
+puts greet_user("Acodemy")</pre>
+          </div>
+        </div>
+
+        <!-- Go -->
+        <div class="language-card" data-language="go">
+          <div class="language-header">
+            <div class="language-icon" style="background: #00add8;">GO</div>
+            <div class="language-name">Go</div>
+          </div>
+          <div class="code-preview">
+<pre>// Go Hello World
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, World!")
+    
+    // Interaktive Version
+    greetUser("Acodemy")
+}
+
+func greetUser(name string) {
+    fmt.Printf("Hello, %s!\n", name)
+}</pre>
+          </div>
+        </div>
+
+        <!-- Swift -->
+        <div class="language-card" data-language="swift">
+          <div class="language-header">
+            <div class="language-icon" style="background: #fa7343;">SW</div>
+            <div class="language-name">Swift</div>
+          </div>
+          <div class="code-preview">
+<pre>// Swift Hello World
+print("Hello, World!")
+
+// Interaktive Version
+func greetUser(name: String) {
+    print("Hello, \(name)!")
+}
+
+greetUser(name: "Acodemy")</pre>
+          </div>
+        </div>
+
+        <!-- Rust -->
+        <div class="language-card" data-language="rust">
+          <div class="language-header">
+            <div class="language-icon" style="background: #000000;">RS</div>
+            <div class="language-name">Rust</div>
+          </div>
+          <div class="code-preview">
+<pre>// Rust Hello World
+fn main() {
+    println!("Hello, World!");
+    
+    // Interaktive Version
+    greet_user("Acodemy");
+}
+
+fn greet_user(name: &str) {
+    println!("Hello, {}!", name);
+}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Acodemy</h3>
+        <p>Die beste Plattform zum spielerischen Erlernen des Programmierens. Starte noch heute deine Reise in die Welt der Technologie.</p>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Rechtliches</h3>
+        <ul class="footer-links">
+          <li><a href="sites/terms.html">Nutzungsbedingungen</a></li>
+          <li><a href="sites/privacy.html">Datenschutz</a></li>
+          <li><a href="sites/imprint.html">Impressum</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Kontakt</h3>
+        <p>Hast du Fragen oder Feedback?<br>
+        Wir freuen uns auf deine Nachricht!</p>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p>&copy; 2025 Acodemy. Alle Rechte vorbehalten.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Programming language cards interaction
+    document.addEventListener('DOMContentLoaded', function() {
+      const languageCards = document.querySelectorAll('.language-card');
+      
+      languageCards.forEach(card => {
+        card.addEventListener('click', function() {
+          // Remove active class from all cards
+          languageCards.forEach(c => c.classList.remove('active'));
+          
+          // Add active class to clicked card
+          this.classList.add('active');
+        });
+      });
+      
+      // Show first card by default
+      if (languageCards.length > 0) {
+        languageCards[0].classList.add('active');
+      }
+    });
+  </script>
 </body>
 </html>
