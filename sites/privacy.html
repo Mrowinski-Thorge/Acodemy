@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Datenschutzerklärung - Acodemy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #fff;
+      --bg-secondary: #f8fafc;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --border: #e2e8f0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+    }
+
+    .header {
+      background: var(--bg-primary);
+      border-bottom: 2px solid var(--border);
+      padding: 1rem 0;
+    }
+
+    .nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .logo img {
+      height: 40px;
+      width: auto;
+    }
+
+    .back-button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .back-button:hover {
+      background: var(--accent-hover);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .content {
+      background: var(--bg-primary);
+      padding: 3rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .last-updated {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    ul, ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    .highlight {
+      background: #dcfce7;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      border-left: 4px solid #10b981;
+      margin: 1.5rem 0;
+    }
+
+    .warning {
+      background: #fef3c7;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      border-left: 4px solid #f59e0b;
+      margin: 1.5rem 0;
+    }
+
+    .contact-box {
+      background: var(--bg-secondary);
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      margin: 1.5rem 0;
+    }
+
+    @media (max-width: 768px) {
+      .nav {
+        padding: 0 1rem;
+      }
+      
+      .container {
+        padding: 2rem 1rem;
+      }
+      
+      .content {
+        padding: 2rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a href="../index.html" class="logo">
+        <img src="../assets/images/logo.png" alt="Acodemy Logo" onerror="this.style.display='none'">
+        <span>Acodemy</span>
+      </a>
+      <a href="../index.html" class="back-button">Zurück zur Startseite</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="content">
+      <h1>Datenschutzerklärung</h1>
+      <p class="last-updated">Letzte Aktualisierung: 24. Juli 2025</p>
+
+      <div class="highlight">
+        <strong>Der Schutz Ihrer Daten ist uns sehr wichtig!</strong> Im Folgenden informieren wir Sie ausführlich über die Erhebung, Verarbeitung und Nutzung Ihrer Daten.
+      </div>
+
+      <h2>1. Verantwortliche Stelle</h2>
+      <div class="contact-box">
+        <strong>Acodemy</strong><br>
+        Thorge Mrowinski<br>
+        Gerhart-Hauptmann-Ring 7J<br>
+        21629 Neu Wulmstorf<br>
+        Deutschland<br><br>
+        E-Mail: info@acodemy.dev
+      </div>
+
+      <h2>2. Erhobene Daten</h2>
+      <ul>
+        <li><strong>Persönliche Daten:</strong> E-Mail-Adresse, Benutzername bei Registrierung</li>
+        <li><strong>Technische Daten:</strong> IP-Adresse, Browsertyp, Betriebssystem, Zugriffsdaten (Datum und Uhrzeit des Zugriffs)</li>
+        <li><strong>Nutzerdaten:</strong> Lernfortschritte, gespeichert über Cloud Firestore</li>
+      </ul>
+
+      <h2>3. Zweck der Datenerhebung</h2>
+      <ul>
+        <li>Bereitstellung und Optimierung unserer Dienste</li>
+        <li>Verwaltung von Nutzerkonten und Authentifizierung mittels Firebase Authentication</li>
+        <li>Hosting der Inhalte über GitHub Pages</li>
+        <li>Speicherung und Verwaltung von Nutzerdaten über Cloud Firestore</li>
+      </ul>
+
+      <h2>4. Datenweitergabe</h2>
+      <p>Ihre Daten werden ausschließlich zum Betrieb unserer Plattform an Dienstleister wie Firebase Authentication und Cloud Firestore (Google LLC) weitergegeben.</p>
+      
+      <div class="warning">
+        <strong>Wichtig:</strong> Details hierzu entnehmen Sie bitte der Google Datenschutzerklärung: <a href="https://policies.google.com/privacy" target="_blank" style="color: var(--accent);">https://policies.google.com/privacy</a>
+      </div>
+
+      <h2>5. Datenschutzmaßnahmen</h2>
+      <p>Angemessene technische und organisatorische Maßnahmen gewährleisten den Schutz Ihrer Daten vor unbefugtem Zugriff, Veränderung, Verlust oder Zerstörung.</p>
+
+      <h2>6. Ihre Rechte als Nutzer</h2>
+      <ul>
+        <li>Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung Ihrer personenbezogenen Daten</li>
+        <li>Außerdem haben Sie das Recht auf Datenübertragbarkeit sowie auf Widerspruch gegen die Verarbeitung</li>
+      </ul>
+
+      <h2>7. Cookies</h2>
+      <p>Zur Verbesserung der Nutzererfahrung und Analyse der Plattformnutzung setzen wir Cookies ein. Sie können die Verwendung von Cookies in Ihren Browser-Einstellungen steuern und deaktivieren.</p>
+
+      <h2>8. Änderungen dieser Erklärung</h2>
+      <p>Wir behalten uns vor, diese Datenschutzerklärung bei Bedarf anzupassen. Änderungen werden transparent kommuniziert.</p>
+
+      <h2>9. Kontakt</h2>
+      <div class="contact-box">
+        <strong>Datenschutz-Kontakt:</strong><br>
+        E-Mail: info@acodemy.dev<br><br>
+        
+        Bei Fragen zum Datenschutz können Sie sich jederzeit an uns wenden.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
