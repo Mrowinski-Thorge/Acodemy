@@ -226,6 +226,19 @@
       .checkbox-container {
         padding: 0.75rem;
       }
+      
+      .logo-container img {
+        height: 80px; /* Kleineres Logo auf Mobile */
+      }
+      
+      .panel {
+        max-width: 95%; /* Mehr Platz auf Mobile */
+        padding: 1rem 1.5rem;
+      }
+      
+      h2 {
+        font-size: 1.5rem; /* Kleinere Überschrift */
+      }
     }
   </style>
 </head>
@@ -330,13 +343,17 @@
     const btnText = document.getElementById('btnText');
     const btnLoading = document.getElementById('btnLoading');
 
-    // Check if user just registered (for terms acceptance)
+    // Check if user just registered or is returning
     const justRegistered = sessionStorage.getItem('acodemy-just-registered') === 'true';
+    const isReturningUser = localStorage.getItem('acodemy-returning-user') === 'true';
     
-    // Check if terms were already accepted
-    const termsAccepted = localStorage.getItem('acodemy-terms-accepted');
-    
-    if (termsAccepted === 'true' && !justRegistered) {
+    // Always show terms for new registrations, skip for returning users
+    if (justRegistered || (!isReturningUser && localStorage.getItem('acodemy-terms-accepted') !== 'true')) {
+      // Show terms screen
+      termsScreen.classList.remove('hidden');
+      authScreen.classList.add('hidden');
+    } else {
+      // Skip terms for returning users
       termsScreen.classList.add('hidden');
       authScreen.classList.remove('hidden');
     }
@@ -349,6 +366,7 @@
     // Accept terms
     acceptTermsBtn.addEventListener('click', function() {
       localStorage.setItem('acodemy-terms-accepted', 'true');
+      localStorage.setItem('acodemy-returning-user', 'true'); // Mark as returning user
       sessionStorage.removeItem('acodemy-just-registered'); // Clear registration flag
       termsScreen.classList.add('hidden');
       authScreen.classList.remove('hidden');
@@ -403,10 +421,10 @@
 
     updateUI();
 
-    // Social Login - Force terms acceptance for new users
+    // Social Login - Always check terms for new users
     document.getElementById('googleLogin').onclick = async () => {
-      // Check if terms accepted for social login
-      if (localStorage.getItem('acodemy-terms-accepted') !== 'true') {
+      // For social login, always check terms first if not a returning user
+      if (!localStorage.getItem('acodemy-returning-user')) {
         sessionStorage.setItem('acodemy-just-registered', 'true');
         termsScreen.classList.remove('hidden');
         authScreen.classList.add('hidden');
@@ -422,8 +440,8 @@
     };
 
     document.getElementById('githubLogin').onclick = async () => {
-      // Check if terms accepted for social login
-      if (localStorage.getItem('acodemy-terms-accepted') !== 'true') {
+      // For social login, always check terms first if not a returning user
+      if (!localStorage.getItem('acodemy-returning-user')) {
         sessionStorage.setItem('acodemy-just-registered', 'true');
         termsScreen.classList.remove('hidden');
         authScreen.classList.add('hidden');
@@ -460,6 +478,8 @@
           sessionStorage.setItem('acodemy-just-registered', 'true');
         } else {
           await signInWithEmailAndPassword(auth, email, password);
+          // Mark as returning user for future logins
+          localStorage.setItem('acodemy-returning-user', 'true');
         }
       } catch (error) {
         let errorMessage = 'Ein Fehler ist aufgetreten';
