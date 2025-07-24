@@ -42,214 +42,6 @@
 
     h2{font-size:1.75rem;color:var(--text-primary);margin-bottom:1rem;font-weight:600;text-align:center}
 
-    /* Terms Acceptance Styles */
-    .terms-screen {
-      width: 100%;
-      text-align: center;
-    }
-
-    .terms-content {
-      margin: 2rem 0;
-      text-align: left;
-    }
-
-    .terms-text {
-      color: var(--text-secondary);
-      margin-bottom: 1.5rem;
-      line-height: 1.6;
-      font-size: 0.95rem;
-    }
-
-    .checkbox-container {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
-      cursor: pointer;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      transition: var(--transition);
-    }
-
-    .checkbox-container:hover {
-      background: var(--bg-secondary);
-    }
-
-    .checkbox-container input[type="checkbox"] {
-      margin: 0;
-      transform: scale(1.2);
-      accent-color: var(--accent);
-    }
-
-    .checkbox-text {
-      font-size: 0.9rem;
-      color: var(--text-primary);
-      line-height: 1.5;
-    }
-
-    .checkbox-text a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .checkbox-text a:hover {
-      color: var(--accent-hover);
-      text-decoration: underline;
-    }
-
-    .terms-buttons {
-      display: flex;
-      gap: 1rem;
-      width: 100%;
-    }
-
-    .btn-secondary {
-      flex: 1;
-      padding: 0.75rem;
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      border: 2px solid var(--border);
-      border-radius: var(--radius);
-      font-size: var(--fs-btn);
-      cursor: pointer;
-      transition: var(--transition);
-      font-weight: 500;
-    }
-
-    .btn-secondary:hover {
-      background: var(--border);
-    }
-
-    .btn-primary {
-      flex: 1;
-      padding: 0.75rem;
-      background: var(--accent);
-      color: white;
-      border: 2px solid var(--accent);
-      border-radius: var(--radius);
-      font-size: var(--fs-btn);
-      cursor: pointer;
-      transition: var(--transition);
-      font-weight: 500;
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-hover);
-      border-color: var(--accent-hover);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      background: var(--text-secondary);
-      border-color: var(--text-secondary);
-    }
-
-    /* Terms Acceptance Styles */
-    .terms-screen {
-      width: 100%;
-      text-align: center;
-    }
-
-    .terms-content {
-      margin: 2rem 0;
-      text-align: left;
-    }
-
-    .terms-text {
-      color: var(--text-secondary);
-      margin-bottom: 1.5rem;
-      line-height: 1.6;
-      font-size: 0.95rem;
-    }
-
-    .checkbox-container {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
-      cursor: pointer;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      transition: var(--transition);
-    }
-
-    .checkbox-container:hover {
-      background: var(--bg-secondary);
-    }
-
-    .checkbox-container input[type="checkbox"] {
-      margin: 0;
-      transform: scale(1.2);
-      accent-color: var(--accent);
-    }
-
-    .checkbox-text {
-      font-size: 0.9rem;
-      color: var(--text-primary);
-      line-height: 1.5;
-    }
-
-    .checkbox-text a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .checkbox-text a:hover {
-      color: var(--accent-hover);
-      text-decoration: underline;
-    }
-
-    .terms-buttons {
-      display: flex;
-      gap: 1rem;
-      width: 100%;
-    }
-
-    .btn-secondary {
-      flex: 1;
-      padding: 0.75rem;
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      border: 2px solid var(--border);
-      border-radius: var(--radius);
-      font-size: var(--fs-btn);
-      cursor: pointer;
-      transition: var(--transition);
-      font-weight: 500;
-    }
-
-    .btn-secondary:hover {
-      background: var(--border);
-    }
-
-    .btn-primary {
-      flex: 1;
-      padding: 0.75rem;
-      background: var(--accent);
-      color: white;
-      border: 2px solid var(--accent);
-      border-radius: var(--radius);
-      font-size: var(--fs-btn);
-      cursor: pointer;
-      transition: var(--transition);
-      font-weight: 500;
-    }
-
-    .btn-primary:hover {
-      background: var(--accent-hover);
-      border-color: var(--accent-hover);
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      background: var(--text-secondary);
-      border-color: var(--text-secondary);
-    }
-
     /* Auth Form Styles */
     .auth-form{width:100%;display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1rem;margin-top:2rem}
     .form-input{
@@ -326,14 +118,6 @@
     }
 
     @media (max-width: 768px) {
-      .terms-buttons {
-        flex-direction: column;
-      }
-      
-      .checkbox-container {
-        padding: 0.75rem;
-      }
-      
       .logo-container img {
         height: 80px; /* Kleineres Logo auf Mobile */
       }
@@ -344,12 +128,12 @@
         margin: 0 auto;
       }
       
-      body {
-        padding: 1rem 0;
-      }
-      
       h2 {
         font-size: 1.5rem; /* Kleinere Überschrift */
+      }
+      
+      body {
+        padding: 1rem 0;
       }
     }
   </style>
@@ -482,50 +266,8 @@
     };
 
     updateUI();
-    const showError = (message) => {
-      errorDiv.textContent = message;
-      errorDiv.classList.remove('hidden');
-      setTimeout(() => errorDiv.classList.add('hidden'), 5000);
-    };
 
-    const hideError = () => {
-      errorDiv.classList.add('hidden');
-    };
-
-    // Loading state
-    const setLoading = (loading) => {
-      submitBtn.disabled = loading;
-      btnText.classList.toggle('hidden', loading);
-      btnLoading.classList.toggle('hidden', !loading);
-    };
-
-    // Toggle Login/Signup
-    let isSignup = false;
-    const updateUI = () => {
-      document.getElementById('loginPrompt').classList.toggle('hidden', isSignup);
-      document.getElementById('toggleSignup').classList.toggle('hidden', isSignup);
-      document.getElementById('registerPrompt').classList.toggle('hidden', !isSignup);
-      document.getElementById('toggleSignin').classList.toggle('hidden', !isSignup);
-      document.getElementById('formTitle').textContent = isSignup ? 'Registrieren' : 'Anmelden';
-      btnText.textContent = isSignup ? 'Registrieren' : 'Anmelden';
-      hideError();
-    };
-
-    document.getElementById('toggleSignup').onclick = (e) => {
-      e.preventDefault();
-      isSignup = true;
-      updateUI();
-    };
-
-    document.getElementById('toggleSignin').onclick = (e) => {
-      e.preventDefault();
-      isSignup = false;
-      updateUI();
-    };
-
-    updateUI();
-
-    // Social Login - Simplified
+    // Social Login
     document.getElementById('googleLogin').onclick = async () => {
       try {
         hideError();
@@ -541,100 +283,6 @@
         await signInWithPopup(auth, githubProvider);
       } catch (error) {
         showError('GitHub-Anmeldung fehlgeschlagen: ' + error.message);
-      }
-    };
-
-    // E-Mail/Passwort Auth
-    document.getElementById('authForm').onsubmit = async (e) => {
-      e.preventDefault();
-      const email = e.target.email.value.trim();
-      const password = e.target.password.value;
-
-      if (!email || !password) {
-        showError('Bitte alle Felder ausfüllen');
-        return;
-      }
-
-      try {
-        hideError();
-        setLoading(true);
-
-        if (isSignup) {
-          const credential = await createUserWithEmailAndPassword(auth, email, password);
-          await credential.user.sendEmailVerification();
-        } else {
-          await signInWithEmailAndPassword(auth, email, password);
-        }
-      } catch (error) {
-        let errorMessage = 'Ein Fehler ist aufgetreten';
-        
-        switch (error.code) {
-          case 'auth/email-already-in-use':
-            errorMessage = 'Diese E-Mail wird bereits verwendet';
-            break;
-          case 'auth/weak-password':
-            errorMessage = 'Das Passwort ist zu schwach';
-            break;
-          case 'auth/user-not-found':
-          case 'auth/wrong-password':
-            errorMessage = 'Ungültige E-Mail oder Passwort';
-            break;
-          case 'auth/invalid-email':
-            errorMessage = 'Ungültige E-Mail-Adresse';
-            break;
-          case 'auth/too-many-requests':
-            errorMessage = 'Zu viele Versuche. Bitte später erneut versuchen.';
-            break;
-          default:
-            errorMessage = error.message;
-        }
-        
-        showError(errorMessage);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    // Passwort anzeigen/verbergen
-    document.getElementById('togglePassword').onclick = () => {
-      const pwInput = document.getElementById('password');
-      const toggleBtn = document.getElementById('togglePassword');
-      
-      if (pwInput.type === 'password') {
-        pwInput.type = 'text';
-        toggleBtn.textContent = 'Verbergen';
-      } else {
-        pwInput.type = 'password';
-        toggleBtn.textContent = 'Anzeigen';
-      }
-    };
-
-    // Passwort-Reset
-    document.getElementById('forgotPassword').onclick = async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      
-      if (!email) {
-        showError('Bitte E-Mail-Adresse eingeben');
-        return;
-      }
-
-      try {
-        await sendPasswordResetEmail(auth, email);
-        showError = () => {}; // Prevent error styling
-        errorDiv.style.background = '#d4edda';
-        errorDiv.style.borderColor = '#c3e6cb';
-        errorDiv.style.color = '#155724';
-        errorDiv.textContent = 'Passwort-Reset-Mail wurde gesendet';
-        errorDiv.classList.remove('hidden');
-        setTimeout(() => {
-          errorDiv.classList.add('hidden');
-          errorDiv.style.background = '';
-          errorDiv.style.borderColor = '';
-          errorDiv.style.color = '';
-        }, 5000);
-      } catch (error) {
-        showError('Fehler beim Senden der Reset-Mail: ' + error.message);
       }
     };
 
