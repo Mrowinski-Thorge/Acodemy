@@ -194,28 +194,41 @@
   </div>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import {
-      getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider,
-      signInWithEmailAndPassword, createUserWithEmailAndPassword,
-      sendPasswordResetEmail, onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import {
+    getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider,
+    signInWithEmailAndPassword, createUserWithEmailAndPassword,
+    sendPasswordResetEmail, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+  import {
+    initializeAppCheck, ReCaptchaEnterpriseProvider
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app-check.js";
 
-    // Firebase-Konfig
-    const firebaseConfig = {
-      apiKey: "AIzaSyDrbeHimI43xjAaw-PvxtZUDh0v3bZA4XQ",
-      authDomain: "codegame-dev.firebaseapp.com",
-      projectId: "codegame-dev",
-      storageBucket: "codegame-dev.firebasestorage.app",
-      messagingSenderId: "787254922496",
-      appId: "1:787254922496:web:e4728c517363197eb7f7e5",
-      measurementId: "G-R3X0TKGNZV"
-    };
-    
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const googleProvider = new GoogleAuthProvider();
-    const githubProvider = new GithubAuthProvider();
+  // Deine echte Firebase-Konfig
+  const firebaseConfig = {
+    apiKey: "AIzaSyDrbeHimI43xjAaw-PvxtZUDh0v3bZA4XQ",
+    authDomain: "codegame-dev.firebaseapp.com",
+    projectId: "codegame-dev",
+    storageBucket: "codegame-dev.firebasestorage.app",
+    messagingSenderId: "787254922496",
+    appId: "1:787254922496:web:e4728c517363197eb7f7e5",
+    measurementId: "G-R3X0TKGNZV"
+  };
+
+  // Firebase App initialisieren
+  const app = initializeApp(firebaseConfig);
+
+  //  App Check aktivieren (mit deinem echten Site Key)
+  initializeAppCheck(app, {
+    provider: new ReCaptchaEnterpriseProvider('6Lf5QY4rAAAAAKV5F9e1C-JWT2KuWeYScTwbCkKE'),
+    isTokenAutoRefreshEnabled: true
+  });
+
+  //  Auth Provider konfigurieren
+  const auth = getAuth(app);
+  const googleProvider = new GoogleAuthProvider();
+  const githubProvider = new GithubAuthProvider();
+
 
     // UI Elements
     const errorDiv = document.getElementById('errorMessage');
