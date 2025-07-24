@@ -400,6 +400,10 @@
     overlay.onclick = async () => {
       if (!auth.currentUser || auth.currentUser.emailVerified) return;
       
+      // Only show for email/password users
+      const isEmailPasswordUser = auth.currentUser.providerData.some(provider => provider.providerId === 'password');
+      if (!isEmailPasswordUser) return;
+      
       try {
         overlayText.textContent = 'Sende Verifikations-E-Mail...';
         overlayLoading.classList.remove('hidden');
@@ -407,12 +411,18 @@
         await sendEmailVerification(auth.currentUser);
         
         overlayLoading.classList.add('hidden');
-        showOverlay('Verifikations-E-Mail gesendet!', true);
-        // Banner bleibt sichtbar bis zur Verifikation oder Reload
+        overlayText.textContent = 'E-Mail wurde versendet';
+        // Banner bleibt gelb (success = false)
+        
+        // Nach 5 Sekunden zurück zum ursprünglichen Text
+        setTimeout(() => {
+          showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)');
+        }, 5000);
+        
       } catch (error) {
         overlayLoading.classList.add('hidden');
         showMessage('Fehler beim Senden der Verifikations-E-Mail: ' + error.message);
-        hideOverlay();
+        showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)');
       }
     };
 
@@ -431,7 +441,7 @@
       
       if (!isVerified && isEmailPasswordUser) {
         showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)');
-      } else {
+      } else if (isVerified || !isEmailPasswordUser) {
         hideOverlay();
       }
     };
@@ -451,11 +461,17 @@
         await reload(user);
         updateUserStatus(auth.currentUser);
         // Initialize lastVerificationStatus after first load
-        lastVerificationStatus = auth.currentUser.emailVerified;
+        const isEmailPasswordUser = auth.currentUser.providerData.some(provider => provider.providerId === 'password');
+        if (isEmailPasswordUser) {
+          lastVerificationStatus = auth.currentUser.emailVerified;
+        }
       } catch (error) {
         console.error('Error reloading user:', error);
         updateUserStatus(user);
-        lastVerificationStatus = user.emailVerified;
+        const isEmailPasswordUser = user.providerData.some(provider => provider.providerId === 'password');
+        if (isEmailPasswordUser) {
+          lastVerificationStatus = user.emailVerified;
+        }
       }
     });
 
@@ -615,26 +631,31 @@
     let lastVerificationStatus = null;
     
     setInterval(async () => {
-      if (auth.currentUser && !auth.currentUser.emailVerified) {
-        try {
-          await reload(auth.currentUser);
-          const currentVerificationStatus = auth.currentUser.emailVerified;
-          
-          // Check if verification status changed from false to true
-          if (lastVerificationStatus === false && currentVerificationStatus === true) {
-            // Show success banner
-            showOverlay('E-Mail erfolgreich verifiziert!', true);
-            updateUserStatus(auth.currentUser);
+      if (auth.currentUser) {
+        // Only check for email/password users
+        const isEmailPasswordUser = auth.currentUser.providerData.some(provider => provider.providerId === 'password');
+        
+        if (isEmailPasswordUser && !auth.currentUser.emailVerified) {
+          try {
+            await reload(auth.currentUser);
+            const currentVerificationStatus = auth.currentUser.emailVerified;
             
-            // Hide banner after 8 seconds
-            setTimeout(() => {
-              hideOverlay();
-            }, 8000);
+            // Check if verification status changed from false to true
+            if (lastVerificationStatus === false && currentVerificationStatus === true) {
+              // Show success banner
+              showOverlay('E-Mail erfolgreich verifiziert!', true);
+              updateUserStatus(auth.currentUser);
+              
+              // Hide banner after 8 seconds
+              setTimeout(() => {
+                hideOverlay();
+              }, 8000);
+            }
+            
+            lastVerificationStatus = currentVerificationStatus;
+          } catch (error) {
+            // Ignore errors in background check
           }
-          
-          lastVerificationStatus = currentVerificationStatus;
-        } catch (error) {
-          // Ignore errors in background check
         }
       }
     }, 10000); // Check every 10 seconds
