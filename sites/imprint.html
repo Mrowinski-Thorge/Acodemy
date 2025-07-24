@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impressum - Acodemy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-primary: #fff;
+      --bg-secondary: #f8fafc;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --border: #e2e8f0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--bg-secondary);
+    }
+
+    .header {
+      background: var(--bg-primary);
+      border-bottom: 2px solid var(--border);
+      padding: 1rem 0;
+    }
+
+    .nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2rem;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .logo img {
+      height: 40px;
+      width: auto;
+    }
+
+    .back-button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .back-button:hover {
+      background: var(--accent-hover);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .content {
+      background: var(--bg-primary);
+      padding: 3rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .contact-box {
+      background: var(--bg-secondary);
+      padding: 2rem;
+      border-radius: 0.75rem;
+      margin: 1.5rem 0;
+      border-left: 4px solid var(--accent);
+    }
+
+    .contact-box h3 {
+      margin-top: 0;
+      color: var(--accent);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .info-card {
+      background: var(--bg-secondary);
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border);
+    }
+
+    .info-card h3 {
+      margin-top: 0;
+      color: var(--accent);
+    }
+
+    .disclaimer {
+      background: #fef3c7;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      border-left: 4px solid #f59e0b;
+      margin: 2rem 0;
+    }
+
+    .disclaimer h3 {
+      margin-top: 0;
+      color: #92400e;
+    }
+
+    @media (max-width: 768px) {
+      .nav {
+        padding: 0 1rem;
+      }
+      
+      .container {
+        padding: 2rem 1rem;
+      }
+      
+      .content {
+        padding: 2rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a href="../index.html" class="logo">
+        <img src="../assets/images/logo.png" alt="Acodemy Logo" onerror="this.style.display='none'">
+        <span>Acodemy</span>
+      </a>
+      <a href="../index.html" class="back-button">Zurück zur Startseite</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="content">
+      <h1>Impressum</h1>
+      <p class="subtitle">Angaben gemäß § 5 TMG und verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</p>
+
+      <div class="contact-box">
+        <h3>Verantwortlicher</h3>
+        <strong>Acodemy</strong><br>
+        Thorge Mrowinski<br>
+        Gerhart-Hauptmann-Ring 7J<br>
+        21629 Neu Wulmstorf<br>
+        Deutschland
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Kontakt</h3>
+          <strong>E-Mail:</strong> info@acodemy.dev<br>
+          <strong>Website:</strong> www.acodemy.dev
+        </div>
+
+        <div class="info-card">
+          <h3>Verantwortlich für Inhalte</h3>
+          <strong>Redaktionell verantwortlich:</strong><br>
+          Thorge Mrowinski<br>
+          Gerhart-Hauptmann-Ring 7J<br>
+          21629 Neu Wulmstorf
+        </div>
+      </div>
+
+      <h2>Haftungshinweis</h2>
+      <p>Trotz sorgfältiger Kontrolle übernehmen wir keine Haftung für die Inhalte externer Links. Für diese Inhalte sind ausschließlich die jeweiligen Betreiber verantwortlich.</p>
+
+      <h2>Urheberrechtshinweis</h2>
+      <p>Alle Inhalte auf Acodemy sind urheberrechtlich geschützt. Jede Nutzung bedarf einer ausdrücklichen schriftlichen Zustimmung des Rechteinhabers.</p>
+
+      <h2>Technische Umsetzung</h2>
+      <div class="info-card">
+        <h3>Hosting & Technik</h3>
+        <p><strong>Hosting:</strong> GitHub Pages<br>
+        <strong>Authentifizierung:</strong> Firebase Authentication<br>
+        <strong>Datenbank:</strong> Cloud Firestore<br>
+        <strong>SSL-Zertifikat:</strong> Automatisch bereitgestellt</p>
+      </div>
+
+      <div class="contact-box">
+        <h3>Kontakt</h3>
+        <p><strong>Allgemeine Anfragen:</strong> info@acodemy.dev</p>
+      </div>sverletzung aufmerksam werden, bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.</p>
+
+      <div class="disclaimer">
+        <h3>Hinweis zur Streitschlichtung</h3>
+        <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" style="color: var(--accent);">https://ec.europa.eu/consumers/odr/</a></p>
+        
+        <p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+      </div>
+
+      <h2>Datenschutz</h2>
+      <p>Informationen zum Datenschutz und zur Verarbeitung personenbezogener Daten finden Sie in unserer <a href="privacy.html" style="color: var(--accent);">Datenschutzerklärung</a>.</p>
+
+      <h2>Technische Umsetzung</h2>
+      <div class="info-card">
+        <h3>Hosting & Technik</h3>
+        <p><strong>Hosting:</strong> Firebase (Google Cloud Platform)<br>
+        <strong>Domain:</strong> Registriert bei einem deutschen Provider<br>
+        <strong>SSL-Zertifikat:</strong> Let's Encrypt</p>
+      </div>
+
+      <div class="contact-box">
+        <h3>Schneller Kontakt</h3>
+        <p><strong>Allgemeine Anfragen:</strong> info@acodemy.de<br>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
