@@ -19,15 +19,18 @@
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;background:var(--bg-secondary);font-family:'Inter',sans-serif}
-    body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px 0}
+    body{
+      display:flex;align-items:flex-start;justify-content:center;
+      min-height:100vh;padding:2rem 0;overflow-y:auto;
+    }
     .hidden{display:none!important}
 
     .panel{
-      max-width:400px;width:90%;
+      max-width:400px;width:90%;margin:0 auto;
       padding:1.5rem 2rem;background:var(--bg-primary);
       border:var(--bw) solid var(--border);border-radius:var(--radius);
       box-shadow:var(--shadow);display:flex;flex-direction:column;
-      align-items:center;
+      align-items:center;position:relative;
     }
 
     .logo-container{margin-bottom:1rem;text-align:center}
@@ -338,6 +341,11 @@
       .panel {
         max-width: 95%; /* Mehr Platz auf Mobile */
         padding: 1rem 1.5rem;
+        margin: 0 auto;
+      }
+      
+      body {
+        padding: 1rem 0;
       }
       
       h2 {
@@ -431,24 +439,49 @@
     const btnText = document.getElementById('btnText');
     const btnLoading = document.getElementById('btnLoading');
 
-    // Terms checkbox handling
-    termsCheckbox.addEventListener('change', function() {
-      acceptTermsBtn.disabled = !this.checked;
-    });
-
-    // Accept terms
-    acceptTermsBtn.addEventListener('click', function() {
-      localStorage.setItem('acodemy-terms-accepted', 'true');
-      termsScreen.classList.add('hidden');
-      authScreen.classList.remove('hidden');
-    });
-
-    // Back to home
-    backToHomeBtn.addEventListener('click', function() {
-      window.location.href = '../index.html';
-    });
-
     // Error handling
+    const showError = (message) => {
+      errorDiv.textContent = message;
+      errorDiv.classList.remove('hidden');
+      setTimeout(() => errorDiv.classList.add('hidden'), 5000);
+    };
+
+    const hideError = () => {
+      errorDiv.classList.add('hidden');
+    };
+
+    // Loading state
+    const setLoading = (loading) => {
+      submitBtn.disabled = loading;
+      btnText.classList.toggle('hidden', loading);
+      btnLoading.classList.toggle('hidden', !loading);
+    };
+
+    // Toggle Login/Signup
+    let isSignup = false;
+    const updateUI = () => {
+      document.getElementById('loginPrompt').classList.toggle('hidden', isSignup);
+      document.getElementById('toggleSignup').classList.toggle('hidden', isSignup);
+      document.getElementById('registerPrompt').classList.toggle('hidden', !isSignup);
+      document.getElementById('toggleSignin').classList.toggle('hidden', !isSignup);
+      document.getElementById('formTitle').textContent = isSignup ? 'Registrieren' : 'Anmelden';
+      btnText.textContent = isSignup ? 'Registrieren' : 'Anmelden';
+      hideError();
+    };
+
+    document.getElementById('toggleSignup').onclick = (e) => {
+      e.preventDefault();
+      isSignup = true;
+      updateUI();
+    };
+
+    document.getElementById('toggleSignin').onclick = (e) => {
+      e.preventDefault();
+      isSignup = false;
+      updateUI();
+    };
+
+    updateUI();
     const showError = (message) => {
       errorDiv.textContent = message;
       errorDiv.classList.remove('hidden');
@@ -596,6 +629,101 @@
         errorDiv.classList.remove('hidden');
         setTimeout(() => {
           errorDiv.classList.add('hidden');
+          errorDiv.style.background = '';
+          errorDiv.style.borderColor = '';
+          errorDiv.style.color = '';
+        }, 5000);
+      } catch (error) {
+        showError('Fehler beim Senden der Reset-Mail: ' + error.message);
+      }
+    };
+
+    // E-Mail/Passwort Auth
+    document.getElementById('authForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const email = e.target.email.value.trim();
+      const password = e.target.password.value;
+
+      if (!email || !password) {
+        showError('Bitte alle Felder ausfüllen');
+        return;
+      }
+
+      try {
+        hideError();
+        setLoading(true);
+
+        if (isSignup) {
+          const credential = await createUserWithEmailAndPassword(auth, email, password);
+          await credential.user.sendEmailVerification();
+        } else {
+          await signInWithEmailAndPassword(auth, email, password);
+        }
+      } catch (error) {
+        let errorMessage = 'Ein Fehler ist aufgetreten';
+        
+        switch (error.code) {
+          case 'auth/email-already-in-use':
+            errorMessage = 'Diese E-Mail wird bereits verwendet';
+            break;
+          case 'auth/weak-password':
+            errorMessage = 'Das Passwort ist zu schwach';
+            break;
+          case 'auth/user-not-found':
+          case 'auth/wrong-password':
+            errorMessage = 'Ungültige E-Mail oder Passwort';
+            break;
+          case 'auth/invalid-email':
+            errorMessage = 'Ungültige E-Mail-Adresse';
+            break;
+          case 'auth/too-many-requests':
+            errorMessage = 'Zu viele Versuche. Bitte später erneut versuchen.';
+            break;
+          default:
+            errorMessage = error.message;
+        }
+        
+        showError(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Passwort anzeigen/verbergen
+    document.getElementById('togglePassword').onclick = () => {
+      const pwInput = document.getElementById('password');
+      const toggleBtn = document.getElementById('togglePassword');
+      
+      if (pwInput.type === 'password') {
+        pwInput.type = 'text';
+        toggleBtn.textContent = 'Verbergen';
+      } else {
+        pwInput.type = 'password';
+        toggleBtn.textContent = 'Anzeigen';
+      }
+    };
+
+    // Passwort-Reset
+    document.getElementById('forgotPassword').onclick = async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      
+      if (!email) {
+        showError('Bitte E-Mail-Adresse eingeben');
+        return;
+      }
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        // Success styling
+        errorDiv.style.background = '#d4edda';
+        errorDiv.style.borderColor = '#c3e6cb';
+        errorDiv.style.color = '#155724';
+        errorDiv.textContent = 'Passwort-Reset-Mail wurde gesendet';
+        errorDiv.classList.remove('hidden');
+        setTimeout(() => {
+          errorDiv.classList.add('hidden');
+          // Reset error styling
           errorDiv.style.background = '';
           errorDiv.style.borderColor = '';
           errorDiv.style.color = '';
