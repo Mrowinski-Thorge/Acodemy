@@ -34,6 +34,185 @@
       background: var(--bg-primary);
     }
 
+    /* Cookie Banner Styles */
+    .cookie-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--text-primary);
+      color: white;
+      padding: 1.5rem 2rem;
+      z-index: 10000;
+      box-shadow: 0 -4px 6px rgba(0,0,0,0.1);
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .cookie-banner.show {
+      transform: translateY(0);
+    }
+
+    .cookie-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .cookie-text {
+      flex: 1;
+    }
+
+    .cookie-text h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .cookie-text p {
+      color: #94a3b8;
+      margin-bottom: 0.75rem;
+    }
+
+    .cookie-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .cookie-links a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.3s ease;
+    }
+
+    .cookie-links a:hover {
+      color: #60a5fa;
+    }
+
+    .cookie-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-shrink: 0;
+    }
+
+    .cookie-btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.875rem;
+    }
+
+    .cookie-btn.accept {
+      background: var(--accent);
+      color: white;
+    }
+
+    .cookie-btn.accept:hover {
+      background: var(--accent-hover);
+    }
+
+    .cookie-btn.decline {
+      background: transparent;
+      color: #94a3b8;
+      border: 1px solid #475569;
+    }
+
+    .cookie-btn.decline:hover {
+      background: #1e293b;
+      color: white;
+    }
+
+    /* Confirmation Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10001;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: white;
+      padding: 2rem;
+      border-radius: var(--radius);
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.show .modal {
+      transform: scale(1);
+    }
+
+    .modal h3 {
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+
+    .modal p {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .modal-btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .modal-btn.confirm {
+      background: #ef4444;
+      color: white;
+    }
+
+    .modal-btn.confirm:hover {
+      background: #dc2626;
+    }
+
+    .modal-btn.cancel {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .modal-btn.cancel:hover {
+      background: var(--border);
+    }
+
     /* Header */
     .header {
       background: var(--bg-primary);
@@ -339,10 +518,53 @@
       .languages-grid {
         grid-template-columns: 1fr;
       }
+      
+      .cookie-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+      
+      .cookie-buttons {
+        width: 100%;
+        justify-content: center;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Cookie Banner -->
+  <div id="cookieBanner" class="cookie-banner">
+    <div class="cookie-content">
+      <div class="cookie-text">
+        <h3>🍪 Wir verwenden Cookies</h3>
+        <p>Diese Website verwendet technisch notwendige Cookies, um Ihnen die bestmögliche Nutzererfahrung zu bieten. Ohne diese Cookies kann unsere Plattform nicht ordnungsgemäß funktionieren.</p>
+        <div class="cookie-links">
+          <a href="sites/privacy.html">Datenschutzerklärung</a>
+          <a href="sites/terms.html">Nutzungsbedingungen</a>
+          <a href="sites/imprint.html">Impressum</a>
+        </div>
+      </div>
+      <div class="cookie-buttons">
+        <button class="cookie-btn decline" id="declineCookies">Ablehnen</button>
+        <button class="cookie-btn accept" id="acceptCookies">Akzeptieren</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmModal" class="modal-overlay">
+    <div class="modal">
+      <h3>⚠️ Service nicht verfügbar</h3>
+      <p>Ohne Cookies können Sie unseren Service leider nicht nutzen, da diese für die grundlegenden Funktionen unserer Lernplattform erforderlich sind.</p>
+      <p><strong>Möchten Sie wirklich ablehnen?</strong></p>
+      <div class="modal-buttons">
+        <button class="modal-btn cancel" id="modalCancel">Zurück</button>
+        <button class="modal-btn confirm" id="modalConfirm">Ja, ablehnen</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Header -->
   <header class="header">
     <nav class="nav">
@@ -648,8 +870,53 @@ fn greet_user(name: &str) {
   </footer>
 
   <script>
-    // Programming language cards interaction
+    // Cookie Banner Management
     document.addEventListener('DOMContentLoaded', function() {
+      const cookieBanner = document.getElementById('cookieBanner');
+      const confirmModal = document.getElementById('confirmModal');
+      const acceptBtn = document.getElementById('acceptCookies');
+      const declineBtn = document.getElementById('declineCookies');
+      const modalCancel = document.getElementById('modalCancel');
+      const modalConfirm = document.getElementById('modalConfirm');
+
+      // Check if cookies were already accepted
+      const cookiesAccepted = localStorage.getItem('acodemy-cookies-accepted');
+      
+      if (!cookiesAccepted) {
+        // Show banner after 1 second
+        setTimeout(() => {
+          cookieBanner.classList.add('show');
+        }, 1000);
+      }
+
+      // Accept cookies
+      acceptBtn.addEventListener('click', function() {
+        localStorage.setItem('acodemy-cookies-accepted', 'true');
+        cookieBanner.classList.remove('show');
+      });
+
+      // Decline cookies - show confirmation
+      declineBtn.addEventListener('click', function() {
+        confirmModal.classList.add('show');
+      });
+
+      // Cancel decline
+      modalCancel.addEventListener('click', function() {
+        confirmModal.classList.remove('show');
+      });
+
+      // Confirm decline
+      modalConfirm.addEventListener('click', function() {
+        localStorage.setItem('acodemy-cookies-accepted', 'false');
+        confirmModal.classList.remove('show');
+        cookieBanner.classList.remove('show');
+        
+        // Show message and redirect
+        alert('Sie können unseren Service ohne Cookies leider nicht nutzen. Sie werden zur Startseite weitergeleitet.');
+        window.location.href = '#'; // Stay on current page
+      });
+
+      // Programming language cards interaction
       const languageCards = document.querySelectorAll('.language-card');
       
       languageCards.forEach(card => {
