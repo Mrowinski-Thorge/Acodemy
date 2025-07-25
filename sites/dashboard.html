@@ -268,18 +268,108 @@
       color: #166534;
     }
 
-    /* Responsive */
-    @media (max-width: 480px) {
+    /* Debug Info */
+    .debug-info {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      max-width: 300px;
+      word-break: break-all;
+    }
+
+    /* Mobile-only Message */
+    .mobile-only-message {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .mobile-only-message .content {
+      background: var(--bg-primary);
+      padding: 2rem;
+      border-radius: var(--radius);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: var(--shadow);
+      border: 4px solid var(--border);
+    }
+
+    .mobile-only-message .icon {
+      font-size: 4rem;
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .mobile-only-message h3 {
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .mobile-only-message p {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .mobile-logout {
+      background: #ef4444;
+      border: 4px solid #ef4444;
+      color: #fff;
+      padding: 0.75rem 2rem;
+      border-radius: var(--radius);
+      font-size: 1.125rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      width: 100%;
+    }
+
+    .mobile-logout:hover {
+      background: #dc2626;
+      border-color: #dc2626;
+      transform: translateY(-1px);
+    }
+
+    /* Responsive - Mobile & Small Tablets */
+    @media (max-width: 768px) {
+      .mobile-only-message {
+        display: flex !important;
+      }
+      
+      #mainScreen {
+        display: none !important;
+      }
+    }
+
+    /* Desktop & Large Tablets */
+    @media (min-width: 769px) {
       .panel {
-        padding: 1rem 1.5rem;
+        padding: 1.5rem 2rem 2rem;
       }
       
       h2 {
-        font-size: 1.5rem;
+        font-size: 1.75rem;
       }
       
       .btn {
-        font-size: 1rem;
+        font-size: 1.125rem;
       }
     }
   </style>
@@ -352,338 +442,402 @@
     </div>
   </div>
 
+  <div id="debugInfo" class="debug-info hidden"></div>
+
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      initializeAppCheck, ReCaptchaV3Provider
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
     import { 
       getAuth, onAuthStateChanged, signOut, updateEmail, updatePassword,
       sendEmailVerification, reload
-    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    // Firebase-Konfig
-    const firebaseConfig = {
-      apiKey: "AIzaSyDrbeHimI43xjAaw-PvxtZUDh0v3bZA4XQ",
-      authDomain: "codegame-dev.firebaseapp.com",
-      projectId: "codegame-dev",
-      storageBucket: "codegame-dev.firebasestorage.app",
-      messagingSenderId: "787254922496",
-      appId: "1:787254922496:web:e4728c517363197eb7f7e5",
-      measurementId: "G-R3X0TKGNZV"
-    };
-    
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // UI Elements
-    const overlay = document.getElementById('verificationOverlay');
-    const overlayText = document.getElementById('overlayText');
-    const overlayLoading = document.getElementById('overlayLoading');
-    const messageContainer = document.getElementById('messageContainer');
-    const verificationStatus = document.getElementById('verificationStatus');
-
-    // Redirect to login if not authenticated
-    let authChecked = false;
-
-    // Message functions
-    const showMessage = (text, type = 'error') => {
-      const message = document.createElement('div');
-      message.className = `message ${type}`;
-      message.textContent = text;
-      messageContainer.innerHTML = '';
-      messageContainer.appendChild(message);
-      setTimeout(() => {
-        if (messageContainer.contains(message)) {
-          messageContainer.removeChild(message);
-        }
-      }, 5000);
+    // Debug-Funktion
+    const debugLog = (message) => {
+      console.log('🔥 Dashboard Debug:', message);
+      const debugDiv = document.getElementById('debugInfo');
+      debugDiv.innerHTML += `${new Date().toLocaleTimeString()}: ${message}<br>`;
+      debugDiv.classList.remove('hidden');
     };
 
-    // Overlay functions
-    const showOverlay = (text, success = false) => {
-      overlayText.textContent = text;
-      overlay.classList.toggle('success', success);
-      overlay.classList.add('show');
-    };
+    try {
+      debugLog('Initialisiere Firebase App...');
 
-    const hideOverlay = () => {
-      overlay.classList.remove('show');
-    };
-
-    // Overlay click handler - Send verification email
-    let hasEmailBeenSent = false;
-    
-    overlay.onclick = async () => {
-      if (!auth.currentUser || auth.currentUser.emailVerified) return;
+      // Firebase-Konfig
+      const firebaseConfig = {
+        apiKey: "AIzaSyDrbeHimI43xjAaw-PvxtZUDh0v3bZA4XQ",
+        authDomain: "codegame-dev.firebaseapp.com",
+        projectId: "codegame-dev",
+        storageBucket: "codegame-dev.firebasestorage.app",
+        messagingSenderId: "787254922496",
+        appId: "1:787254922496:web:e4728c517363197eb7f7e5",
+        measurementId: "G-R3X0TKGNZV"
+      };
       
-      try {
-        overlayText.textContent = 'Sende Verifikations-E-Mail...';
-        overlayLoading.classList.remove('hidden');
-        
-        await sendEmailVerification(auth.currentUser);
-        
-        overlayLoading.classList.add('hidden');
-        overlayText.textContent = 'E-Mail wurde versendet';
-        hasEmailBeenSent = true;
-        
-        // Nach 5 Sekunden zum "erneut senden" Text
+      const app = initializeApp(firebaseConfig);
+      debugLog('Firebase App initialisiert ✓');
+
+      // ERST App Check und reCAPTCHA initialisieren
+      debugLog('Initialisiere App Check und reCAPTCHA...');
+      
+      const appCheck = initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider('6LcMLY4rAAAAAJwnajZRtnOfjRij7lJGDKMoztZN'),
+        isTokenAutoRefreshEnabled: true
+      });
+
+      debugLog('App Check und reCAPTCHA initialisiert ✓');
+
+      // DANN Auth Provider konfigurieren
+      debugLog('Initialisiere Auth nach App Check...');
+      const auth = getAuth(app);
+      debugLog('Auth nach App Check konfiguriert ✓');
+
+      // UI Elements
+      const overlay = document.getElementById('verificationOverlay');
+      const overlayText = document.getElementById('overlayText');
+      const overlayLoading = document.getElementById('overlayLoading');
+      const messageContainer = document.getElementById('messageContainer');
+      const verificationStatus = document.getElementById('verificationStatus');
+
+      // Redirect to login if not authenticated
+      let authChecked = false;
+
+      // Message functions
+      const showMessage = (text, type = 'error') => {
+        debugLog(`Nachricht: ${text} (${type})`);
+        const message = document.createElement('div');
+        message.className = `message ${type}`;
+        message.textContent = text;
+        messageContainer.innerHTML = '';
+        messageContainer.appendChild(message);
         setTimeout(() => {
-          showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)');
+          if (messageContainer.contains(message)) {
+            messageContainer.removeChild(message);
+          }
         }, 5000);
+      };
+
+      // Overlay functions
+      const showOverlay = (text, success = false) => {
+        debugLog(`Overlay: ${text} (success: ${success})`);
+        overlayText.textContent = text;
+        overlay.classList.toggle('success', success);
+        overlay.classList.add('show');
+      };
+
+      const hideOverlay = () => {
+        debugLog('Overlay ausblenden');
+        overlay.classList.remove('show');
+      };
+
+      // Overlay click handler - Send verification email
+      let hasEmailBeenSent = false;
+      
+      overlay.onclick = async () => {
+        if (!auth.currentUser || auth.currentUser.emailVerified) return;
         
-      } catch (error) {
-        overlayLoading.classList.add('hidden');
-        showMessage('Fehler beim Senden der Verifikations-E-Mail: ' + error.message);
-        if (hasEmailBeenSent) {
-          showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)');
-        } else {
+        try {
+          debugLog('Sende Verifikations-E-Mail...');
+          overlayText.textContent = 'Sende Verifikations-E-Mail...';
+          overlayLoading.classList.remove('hidden');
+          
+          await sendEmailVerification(auth.currentUser);
+          debugLog('Verifikations-E-Mail gesendet ✓');
+          
+          overlayLoading.classList.add('hidden');
+          overlayText.textContent = 'E-Mail wurde versendet';
+          hasEmailBeenSent = true;
+          
+          // Nach 5 Sekunden zum "erneut senden" Text
+          setTimeout(() => {
+            showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)');
+          }, 5000);
+          
+        } catch (error) {
+          debugLog(`Fehler beim Senden der Verifikations-E-Mail: ${error.code} - ${error.message}`);
+          overlayLoading.classList.add('hidden');
+          showMessage('Fehler beim Senden der Verifikations-E-Mail: ' + error.message);
+          if (hasEmailBeenSent) {
+            showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)');
+          } else {
+            showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum Senden)');
+          }
+        }
+      };
+
+      // Update user status
+      const updateUserStatus = (user) => {
+        if (!user) return;
+        
+        debugLog(`Update User Status: ${user.email} (verifiziert: ${user.emailVerified})`);
+        document.getElementById('userEmail').textContent = user.email;
+        
+        const isVerified = user.emailVerified;
+        verificationStatus.textContent = isVerified ? 'E-Mail verifiziert ✓' : 'E-Mail nicht verifiziert';
+        verificationStatus.className = `verification-status ${isVerified ? 'verified' : 'unverified'}`;
+        
+        // Show overlay for all non-verified users
+        if (!isVerified) {
           showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum Senden)');
+        } else {
+          hideOverlay();
         }
-      }
-    };
+      };
 
-    // Update user status
-    const updateUserStatus = (user) => {
-      if (!user) return;
-      
-      document.getElementById('userEmail').textContent = user.email;
-      
-      const isVerified = user.emailVerified;
-      verificationStatus.textContent = isVerified ? 'E-Mail verifiziert ✓' : 'E-Mail nicht verifiziert';
-      verificationStatus.className = `verification-status ${isVerified ? 'verified' : 'unverified'}`;
-      
-      // Show overlay for all non-verified users
-      if (!isVerified) {
-        showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum Senden)');
-      } else {
-        hideOverlay();
-      }
-    };
-
-    // Auth state change handler
-    onAuthStateChanged(auth, async (user) => {
-      authChecked = true;
-      
-      if (!user) {
-        // Not authenticated - redirect to login
-        window.location.href = 'login.html';
-        return;
-      }
-      
-      // Reload user data to get latest verification status
-      try {
-        await reload(user);
-        updateUserStatus(auth.currentUser);
-        // Initialize lastVerificationStatus and start checker if needed
-        lastVerificationStatus = auth.currentUser.emailVerified;
-        if (!auth.currentUser.emailVerified) {
-          startVerificationChecker();
-        }
-      } catch (error) {
-        console.error('Error reloading user:', error);
-        updateUserStatus(user);
-        lastVerificationStatus = user.emailVerified;
-        if (!user.emailVerified) {
-          startVerificationChecker();
-        }
-      }
-    });
-
-    // Prevent access if not authenticated
-    if (!authChecked) {
-      // Hide content initially
-      document.getElementById('mainScreen').style.visibility = 'hidden';
-      
-      // Show content only after auth check
-      setTimeout(() => {
-        if (authChecked && auth.currentUser) {
-          document.getElementById('mainScreen').style.visibility = 'visible';
-        }
-      }, 1000);
-    }
-
-    // Mobile logout button
-    document.getElementById('mobileLogoutBtn').onclick = async () => {
-      try {
-        await signOut(auth);
-      } catch (error) {
-        console.error('Logout error:', error);
-      }
-    };
-
-    // Logout
-    document.getElementById('logoutBtn').onclick = async () => {
-      try {
-        await signOut(auth);
-        // Redirect happens automatically via onAuthStateChanged
-      } catch (error) {
-        showMessage('Fehler beim Ausloggen: ' + error.message);
-      }
-    };
-
-    // Manual email verification
-    document.getElementById('verifyEmailBtn').onclick = async () => {
-      if (!auth.currentUser) return;
-      
-      try {
-        await sendEmailVerification(auth.currentUser);
-        showMessage('Verifikations-E-Mail gesendet!', 'success');
-      } catch (error) {
-        showMessage('Fehler beim Senden der Verifikations-E-Mail: ' + error.message);
-      }
-    };
-
-    // Email change functionality
-    document.getElementById('emailBtn').onclick = () => {
-      document.getElementById('passwordChange').classList.add('hidden');
-      document.getElementById('emailChange').classList.toggle('hidden');
-      document.getElementById('newEmail').value = '';
-    };
-
-    document.getElementById('cancelEmailBtn').onclick = () => {
-      document.getElementById('emailChange').classList.add('hidden');
-      document.getElementById('newEmail').value = '';
-    };
-
-    document.getElementById('saveEmailBtn').onclick = async () => {
-      const newEmail = document.getElementById('newEmail').value.trim();
-      const loadingSpinner = document.getElementById('emailLoading');
-      
-      if (!newEmail) {
-        showMessage('Bitte neue E-Mail-Adresse eingeben');
-        return;
-      }
-      
-      if (newEmail === auth.currentUser.email) {
-        showMessage('Neue E-Mail-Adresse muss sich von der aktuellen unterscheiden');
-        return;
-      }
-
-      try {
-        loadingSpinner.classList.remove('hidden');
-        await updateEmail(auth.currentUser, newEmail);
+      // Auth state change handler
+      onAuthStateChanged(auth, async (user) => {
+        authChecked = true;
+        debugLog(`Auth State Change: ${user ? user.email : 'Nicht angemeldet'}`);
         
-        // Send verification email for new address
-        await sendEmailVerification(auth.currentUser);
+        if (!user) {
+          // Not authenticated - redirect to login
+          debugLog('Weiterleitung zur Login-Seite...');
+          window.location.href = 'login.html';
+          return;
+        }
         
-        showMessage('E-Mail erfolgreich geändert! Bitte verifiziere die neue Adresse.', 'success');
+        // Reload user data to get latest verification status
+        try {
+          debugLog('Lade Benutzerdaten neu...');
+          await reload(user);
+          updateUserStatus(auth.currentUser);
+          // Initialize lastVerificationStatus and start checker if needed
+          lastVerificationStatus = auth.currentUser.emailVerified;
+          if (!auth.currentUser.emailVerified) {
+            startVerificationChecker();
+          }
+        } catch (error) {
+          debugLog(`Fehler beim Neuladen der Benutzerdaten: ${error.message}`);
+          updateUserStatus(user);
+          lastVerificationStatus = user.emailVerified;
+          if (!user.emailVerified) {
+            startVerificationChecker();
+          }
+        }
+      });
+
+      // Prevent access if not authenticated
+      if (!authChecked) {
+        // Hide content initially
+        document.getElementById('mainScreen').style.visibility = 'hidden';
+        
+        // Show content only after auth check
+        setTimeout(() => {
+          if (authChecked && auth.currentUser) {
+            document.getElementById('mainScreen').style.visibility = 'visible';
+          }
+        }, 1000);
+      }
+
+      // Mobile logout button
+      document.getElementById('mobileLogoutBtn').onclick = async () => {
+        try {
+          debugLog('Mobile Logout...');
+          await signOut(auth);
+        } catch (error) {
+          debugLog(`Mobile Logout Fehler: ${error.message}`);
+        }
+      };
+
+      // Logout
+      document.getElementById('logoutBtn').onclick = async () => {
+        try {
+          debugLog('Logout...');
+          await signOut(auth);
+          // Redirect happens automatically via onAuthStateChanged
+        } catch (error) {
+          debugLog(`Logout Fehler: ${error.message}`);
+          showMessage('Fehler beim Ausloggen: ' + error.message);
+        }
+      };
+
+      // Email change functionality
+      document.getElementById('emailBtn').onclick = () => {
+        debugLog('E-Mail-Änderung Dialog öffnen');
+        document.getElementById('passwordChange').classList.add('hidden');
+        document.getElementById('emailChange').classList.toggle('hidden');
+        document.getElementById('newEmail').value = '';
+      };
+
+      document.getElementById('cancelEmailBtn').onclick = () => {
+        debugLog('E-Mail-Änderung abgebrochen');
         document.getElementById('emailChange').classList.add('hidden');
         document.getElementById('newEmail').value = '';
+      };
+
+      document.getElementById('saveEmailBtn').onclick = async () => {
+        const newEmail = document.getElementById('newEmail').value.trim();
+        const loadingSpinner = document.getElementById('emailLoading');
         
-        // Update UI
-        updateUserStatus(auth.currentUser);
+        debugLog(`E-Mail ändern zu: ${newEmail}`);
         
-      } catch (error) {
-        let errorMessage = 'Fehler beim Ändern der E-Mail';
-        
-        switch (error.code) {
-          case 'auth/email-already-in-use':
-            errorMessage = 'Diese E-Mail wird bereits verwendet';
-            break;
-          case 'auth/invalid-email':
-            errorMessage = 'Ungültige E-Mail-Adresse';
-            break;
-          case 'auth/requires-recent-login':
-            errorMessage = 'Bitte logge dich erneut ein und versuche es dann nochmal';
-            break;
-          default:
-            errorMessage = 'Fehler beim Ändern der E-Mail: ' + error.message;
+        if (!newEmail) {
+          showMessage('Bitte neue E-Mail-Adresse eingeben');
+          return;
         }
         
-        showMessage(errorMessage);
-      } finally {
-        loadingSpinner.classList.add('hidden');
-      }
-    };
+        if (newEmail === auth.currentUser.email) {
+          showMessage('Neue E-Mail-Adresse muss sich von der aktuellen unterscheiden');
+          return;
+        }
 
-    // Password change functionality
-    document.getElementById('passwordBtn').onclick = () => {
-      document.getElementById('emailChange').classList.add('hidden');
-      document.getElementById('passwordChange').classList.toggle('hidden');
-      document.getElementById('newPassword').value = '';
-    };
+        try {
+          loadingSpinner.classList.remove('hidden');
+          debugLog('Aktualisiere E-Mail-Adresse...');
+          await updateEmail(auth.currentUser, newEmail);
+          
+          // Send verification email for new address
+          debugLog('Sende Verifikations-E-Mail für neue Adresse...');
+          await sendEmailVerification(auth.currentUser);
+          
+          debugLog('E-Mail erfolgreich geändert ✓');
+          showMessage('E-Mail erfolgreich geändert! Bitte verifiziere die neue Adresse.', 'success');
+          document.getElementById('emailChange').classList.add('hidden');
+          document.getElementById('newEmail').value = '';
+          
+          // Update UI
+          updateUserStatus(auth.currentUser);
+          
+        } catch (error) {
+          debugLog(`E-Mail-Änderung Fehler: ${error.code} - ${error.message}`);
+          let errorMessage = 'Fehler beim Ändern der E-Mail';
+          
+          switch (error.code) {
+            case 'auth/email-already-in-use':
+              errorMessage = 'Diese E-Mail wird bereits verwendet';
+              break;
+            case 'auth/invalid-email':
+              errorMessage = 'Ungültige E-Mail-Adresse';
+              break;
+            case 'auth/requires-recent-login':
+              errorMessage = 'Bitte logge dich erneut ein und versuche es dann nochmal';
+              break;
+            default:
+              errorMessage = 'Fehler beim Ändern der E-Mail: ' + error.message;
+          }
+          
+          showMessage(errorMessage);
+        } finally {
+          loadingSpinner.classList.add('hidden');
+        }
+      };
 
-    document.getElementById('cancelPasswordBtn').onclick = () => {
-      document.getElementById('passwordChange').classList.add('hidden');
-      document.getElementById('newPassword').value = '';
-    };
+      // Password change functionality
+      document.getElementById('passwordBtn').onclick = () => {
+        debugLog('Passwort-Änderung Dialog öffnen');
+        document.getElementById('emailChange').classList.add('hidden');
+        document.getElementById('passwordChange').classList.toggle('hidden');
+        document.getElementById('newPassword').value = '';
+      };
 
-    document.getElementById('savePasswordBtn').onclick = async () => {
-      const newPassword = document.getElementById('newPassword').value;
-      const loadingSpinner = document.getElementById('passwordLoading');
-      
-      if (!newPassword) {
-        showMessage('Bitte neues Passwort eingeben');
-        return;
-      }
-      
-      if (newPassword.length < 6) {
-        showMessage('Passwort muss mindestens 6 Zeichen lang sein');
-        return;
-      }
-
-      try {
-        loadingSpinner.classList.remove('hidden');
-        await updatePassword(auth.currentUser, newPassword);
-        
-        showMessage('Passwort erfolgreich geändert!', 'success');
+      document.getElementById('cancelPasswordBtn').onclick = () => {
+        debugLog('Passwort-Änderung abgebrochen');
         document.getElementById('passwordChange').classList.add('hidden');
         document.getElementById('newPassword').value = '';
-        
-      } catch (error) {
-        let errorMessage = 'Fehler beim Ändern des Passworts';
-        
-        switch (error.code) {
-          case 'auth/weak-password':
-            errorMessage = 'Das Passwort ist zu schwach';
-            break;
-          case 'auth/requires-recent-login':
-            errorMessage = 'Bitte logge dich erneut ein und versuche es dann nochmal';
-            break;
-          default:
-            errorMessage = 'Fehler beim Ändern des Passworts: ' + error.message;
-        }
-        
-        showMessage(errorMessage);
-      } finally {
-        loadingSpinner.classList.add('hidden');
-      }
-    };
+      };
 
-    // Check verification status periodically - only for unverified users
-    let lastVerificationStatus = null;
-    let verificationChecker = null;
-    
-    const startVerificationChecker = () => {
-      if (verificationChecker) clearInterval(verificationChecker);
-      
-      verificationChecker = setInterval(async () => {
-        if (auth.currentUser && !auth.currentUser.emailVerified) {
-          try {
-            await reload(auth.currentUser);
-            const currentVerificationStatus = auth.currentUser.emailVerified;
-            
-            // Check if verification status changed from false to true
-            if (lastVerificationStatus === false && currentVerificationStatus === true) {
-              // Show success banner
-              showOverlay('E-Mail erfolgreich verifiziert!', true);
-              updateUserStatus(auth.currentUser);
-              
-              // Hide banner after 8 seconds and stop checking
-              setTimeout(() => {
-                hideOverlay();
-                clearInterval(verificationChecker);
-              }, 8000);
-            }
-            
-            lastVerificationStatus = currentVerificationStatus;
-          } catch (error) {
-            // Ignore errors in background check
-          }
-        } else {
-          // User is verified, stop checking
-          clearInterval(verificationChecker);
+      document.getElementById('savePasswordBtn').onclick = async () => {
+        const newPassword = document.getElementById('newPassword').value;
+        const loadingSpinner = document.getElementById('passwordLoading');
+        
+        debugLog('Passwort ändern...');
+        
+        if (!newPassword) {
+          showMessage('Bitte neues Passwort eingeben');
+          return;
         }
-      }, 10000); // Check every 10 seconds
-    };
+        
+        if (newPassword.length < 6) {
+          showMessage('Passwort muss mindestens 6 Zeichen lang sein');
+          return;
+        }
+
+        try {
+          loadingSpinner.classList.remove('hidden');
+          debugLog('Aktualisiere Passwort...');
+          await updatePassword(auth.currentUser, newPassword);
+          
+          debugLog('Passwort erfolgreich geändert ✓');
+          showMessage('Passwort erfolgreich geändert!', 'success');
+          document.getElementById('passwordChange').classList.add('hidden');
+          document.getElementById('newPassword').value = '';
+          
+        } catch (error) {
+          debugLog(`Passwort-Änderung Fehler: ${error.code} - ${error.message}`);
+          let errorMessage = 'Fehler beim Ändern des Passworts';
+          
+          switch (error.code) {
+            case 'auth/weak-password':
+              errorMessage = 'Das Passwort ist zu schwach';
+              break;
+            case 'auth/requires-recent-login':
+              errorMessage = 'Bitte logge dich erneut ein und versuche es dann nochmal';
+              break;
+            default:
+              errorMessage = 'Fehler beim Ändern des Passworts: ' + error.message;
+          }
+          
+          showMessage(errorMessage);
+        } finally {
+          loadingSpinner.classList.add('hidden');
+        }
+      };
+
+      // Check verification status periodically - only for unverified users
+      let lastVerificationStatus = null;
+      let verificationChecker = null;
+      
+      const startVerificationChecker = () => {
+        if (verificationChecker) clearInterval(verificationChecker);
+        
+        debugLog('Starte Verifikations-Checker...');
+        verificationChecker = setInterval(async () => {
+          if (auth.currentUser && !auth.currentUser.emailVerified) {
+            try {
+              await reload(auth.currentUser);
+              const currentVerificationStatus = auth.currentUser.emailVerified;
+              
+              // Check if verification status changed from false to true
+              if (lastVerificationStatus === false && currentVerificationStatus === true) {
+                debugLog('E-Mail-Verifikation erkannt! ✓');
+                // Show success banner
+                showOverlay('E-Mail erfolgreich verifiziert!', true);
+                updateUserStatus(auth.currentUser);
+                
+                // Hide banner after 8 seconds and stop checking
+                setTimeout(() => {
+                  hideOverlay();
+                  clearInterval(verificationChecker);
+                }, 8000);
+              }
+              
+              lastVerificationStatus = currentVerificationStatus;
+            } catch (error) {
+              // Ignore errors in background check
+              debugLog(`Verifikations-Check Fehler (ignoriert): ${error.message}`);
+            }
+          } else {
+            // User is verified, stop checking
+            debugLog('Benutzer verifiziert - stoppe Checker');
+            clearInterval(verificationChecker);
+          }
+        }, 10000); // Check every 10 seconds
+      };
+
+      debugLog('Dashboard vollständig initialisiert ✓');
+
+    } catch (error) {
+      debugLog(`Initialisierungsfehler: ${error.message}`);
+      console.error('Firebase Dashboard Initialisierung fehlgeschlagen:', error);
+      
+      const errorDiv = document.getElementById('messageContainer');
+      const message = document.createElement('div');
+      message.className = 'message error';
+      message.textContent = 'Firebase konnte nicht initialisiert werden. Bitte laden Sie die Seite neu.';
+      errorDiv.appendChild(message);
+    }
   </script>
 </body>
 </html>
