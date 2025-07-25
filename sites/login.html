@@ -215,23 +215,31 @@
     measurementId: "G-R3X0TKGNZV"
   };
 
-  try {
-    // Firebase App initialisieren
-    const app = initializeApp(firebaseConfig);
-    console.log('Firebase App initialisiert ✓');
+  // Firebase App initialisieren
+  const app = initializeApp(firebaseConfig);
+  console.log('Firebase App initialisiert ✓');
 
-    // WICHTIG: App Check ZUERST initialisieren (VOR Auth!)
+  // WICHTIG: App Check ZUERST initialisieren (VOR Auth!)
+  try {
     const appCheck = initializeAppCheck(app, {
       provider: new ReCaptchaV3Provider('6LcMLY4rAAAAAJwnajZRtnOfjRij7lJGDKMoztZN'),
       isTokenAutoRefreshEnabled: true
     });
     console.log('App Check initialisiert ✓');
+  } catch (error) {
+    console.error('App Check Fehler:', error);
+  }
 
-    // DANN Auth initialisieren
-    const auth = getAuth(app);
-    const googleProvider = new GoogleAuthProvider();
-    const githubProvider = new GithubAuthProvider();
-    console.log('Auth Provider konfiguriert ✓');
+  // Kleine Verzögerung um sicherzustellen dass App Check bereit ist
+  await new Promise(resolve => setTimeout(resolve, 100));
+
+  // DANN Auth initialisieren
+  const auth = getAuth(app);
+  const googleProvider = new GoogleAuthProvider();
+  const githubProvider = new GithubAuthProvider();
+  console.log('Auth Provider konfiguriert ✓');
+
+  try {
 
     // UI Elements
     const errorDiv = document.getElementById('errorMessage');
