@@ -49,6 +49,38 @@
 
     .hidden { display: none !important; }
 
+    /* Loading Screen */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .loading-content {
+      text-align: center;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid var(--border);
+      border-radius: 50%;
+      border-top-color: var(--accent);
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     .panel {
       max-width: 400px;
       width: 90%;
@@ -242,10 +274,6 @@
       margin-left: 0.5rem;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
     /* Error/Success Messages */
     .message {
       padding: 0.75rem;
@@ -361,6 +389,14 @@
   </style>
 </head>
 <body>
+  <!-- Loading Screen -->
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loading-content">
+      <div class="loading-spinner"></div>
+      <p style="color: var(--text-secondary);">Laden...</p>
+    </div>
+  </div>
+
   <!-- E-Mail-Verifikations-Overlay -->
   <div id="verificationOverlay">
     <span id="overlayText">Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)</span>
@@ -379,7 +415,7 @@
     </div>
   </div>
 
-  <div id="mainScreen" class="panel">
+  <div id="mainScreen" class="panel hidden">
     <div class="logo-container">
       <img src="../assets/images/logo.png" alt="Acodemy Logo" onerror="this.style.display='none'">
     </div>
@@ -451,6 +487,8 @@
     const auth = getAuth(app);
 
     // UI Elements
+    const loadingScreen = document.getElementById('loadingScreen');
+    const mainScreen = document.getElementById('mainScreen');
     const overlay = document.getElementById('verificationOverlay');
     const overlayText = document.getElementById('overlayText');
     const overlayLoading = document.getElementById('overlayLoading');
@@ -461,6 +499,7 @@
     let lastVerificationStatus = null;
     let verificationChecker = null;
     let hasEmailBeenSent = false;
+    let isLoggingOut = false; // Flag to prevent redirect during logout
 
     // Message functions
     const showMessage = (text, type = 'error') => {
@@ -544,13 +583,17 @@
       console.log('Auth state changed:', user ? user.email : 'No user');
       
       if (!user) {
-        // Not authenticated - redirect to login
-        console.log('Redirecting to login...');
-        window.location.href = 'login.html';
+        // Only redirect if we're not in the middle of logging out
+        if (!isLoggingOut) {
+          console.log('No user and not logging out - redirecting to login...');
+          window.location.href = 'login.html';
+        }
         return;
       }
       
-      // User is authenticated
+      // User is authenticated - show the dashboard
+      console.log('User authenticated:', user.email);
+      
       try {
         await reload(user);
         updateUserStatus(auth.currentUser);
@@ -566,6 +609,10 @@
           startVerificationChecker();
         }
       }
+      
+      // Hide loading screen and show main screen
+      loadingScreen.classList.add('hidden');
+      mainScreen.classList.remove('hidden');
     });
 
     // Overlay click handler - Send verification email
@@ -602,9 +649,13 @@
     document.getElementById('mobileLogoutBtn').onclick = async () => {
       try {
         console.log('Mobile logout clicked');
+        isLoggingOut = true;
         await signOut(auth);
+        // Manual redirect after successful logout
+        window.location.href = 'login.html';
       } catch (error) {
         console.error('Mobile logout error:', error);
+        isLoggingOut = false;
       }
     };
 
@@ -612,9 +663,13 @@
     document.getElementById('logoutBtn').onclick = async () => {
       try {
         console.log('Logout clicked');
+        isLoggingOut = true;
         await signOut(auth);
+        // Manual redirect after successful logout
+        window.location.href = 'login.html';
       } catch (error) {
         console.error('Logout error:', error);
+        isLoggingOut = false;
         showMessage('Fehler beim Ausloggen: ' + error.message);
       }
     };
