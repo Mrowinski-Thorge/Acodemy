@@ -452,9 +452,9 @@
     // Firebase initialisieren
     const app = initializeApp(firebaseConfig);
     
-    // App Check ZUERST initialisieren
+    // App Check ZUERST initialisieren - mit dem GLEICHEN Key wie in login.html!
     const appCheck = initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider('6LfxOjwqAAAAAP60gJcFNhpwcSLWK7M0YGyS6A8G'),
+      provider: new ReCaptchaV3Provider('6LcMLY4rAAAAAJwnajZRtnOfjRij7lJGDKMoztZN'),
       isTokenAutoRefreshEnabled: true
     });
     
