@@ -117,8 +117,6 @@
       font-size:0.875rem;text-align:center;
     }
 
-
-
     @media (max-width: 768px) {
       .logo-container img {
         height: 80px;
@@ -195,24 +193,16 @@
     </div>
   </div>
 
-  <div id="debugInfo" class="hidden"></div>
-
   <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider,
     signInWithEmailAndPassword, createUserWithEmailAndPassword,
-    sendPasswordResetEmail, onAuthStateChanged
+    sendPasswordResetEmail, onAuthStateChanged, sendEmailVerification
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import {
     initializeAppCheck, ReCaptchaV3Provider
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
-
-  // Debug-Funktion (deaktiviert)
-  const debugLog = (message) => {
-    console.log('🔥 Firebase Debug:', message);
-    // Debug-Panel entfernt
-  };
 
   // Firebase-Konfiguration
   const firebaseConfig = {
@@ -226,31 +216,22 @@
   };
 
   try {
-    debugLog('Initialisiere Firebase App...');
-    
     // Firebase App initialisieren
     const app = initializeApp(firebaseConfig);
-    debugLog('Firebase App initialisiert ✓');
+    console.log('Firebase App initialisiert ✓');
 
-    // ERST App Check und reCAPTCHA initialisieren
-    debugLog('Initialisiere App Check und reCAPTCHA...');
-    
+    // WICHTIG: App Check ZUERST initialisieren (VOR Auth!)
     const appCheck = initializeAppCheck(app, {
       provider: new ReCaptchaV3Provider('6LcMLY4rAAAAAJwnajZRtnOfjRij7lJGDKMoztZN'),
       isTokenAutoRefreshEnabled: true
     });
+    console.log('App Check initialisiert ✓');
 
-    debugLog('App Check und reCAPTCHA initialisiert ✓');
-
-    // DANN Auth Provider konfigurieren
-    debugLog('Initialisiere Auth nach App Check...');
+    // DANN Auth initialisieren
     const auth = getAuth(app);
     const googleProvider = new GoogleAuthProvider();
     const githubProvider = new GithubAuthProvider();
-
-    debugLog('Auth Provider nach App Check konfiguriert ✓');
-
-    debugLog('Auth Provider konfiguriert ✓');
+    console.log('Auth Provider konfiguriert ✓');
 
     // UI Elements
     const errorDiv = document.getElementById('errorMessage');
@@ -260,7 +241,6 @@
 
     // Error handling
     const showError = (message) => {
-      debugLog(`Fehler: ${message}`);
       errorDiv.textContent = message;
       errorDiv.classList.remove('hidden');
       setTimeout(() => errorDiv.classList.add('hidden'), 5000);
@@ -303,14 +283,12 @@
 
     updUI();
 
-    // Social Login mit besserer Fehlerbehandlung
+    // Social Login
     document.getElementById('googleLogin').onclick = async () => {
       try {
-        debugLog('Google-Anmeldung gestartet...');
         const result = await signInWithPopup(auth, googleProvider);
-        debugLog('Google-Anmeldung erfolgreich ✓');
+        console.log('Google-Anmeldung erfolgreich');
       } catch (error) {
-        debugLog(`Google-Anmeldung Fehler: ${error.code} - ${error.message}`);
         let errorMessage = 'Google-Anmeldung fehlgeschlagen';
         
         switch (error.code) {
@@ -332,11 +310,9 @@
 
     document.getElementById('githubLogin').onclick = async () => {
       try {
-        debugLog('GitHub-Anmeldung gestartet...');
         const result = await signInWithPopup(auth, githubProvider);
-        debugLog('GitHub-Anmeldung erfolgreich ✓');
+        console.log('GitHub-Anmeldung erfolgreich');
       } catch (error) {
-        debugLog(`GitHub-Anmeldung Fehler: ${error.code} - ${error.message}`);
         let errorMessage = 'GitHub-Anmeldung fehlgeschlagen';
         
         switch (error.code) {
@@ -370,21 +346,17 @@
       try {
         hideError();
         setLoading(true);
-        debugLog(`${isSignup ? 'Registrierung' : 'Anmeldung'} gestartet für: ${email}`);
         
-        let cred = isSignup
-          ? await createUserWithEmailAndPassword(auth, email, pw)
-          : await signInWithEmailAndPassword(auth, email, pw);
-          
-        debugLog(`${isSignup ? 'Registrierung' : 'Anmeldung'} erfolgreich ✓`);
-          
         if (isSignup) {
-          debugLog('Sende Verifizierungs-E-Mail...');
-          await cred.user.sendEmailVerification();
-          debugLog('Verifizierungs-E-Mail gesendet ✓');
+          const cred = await createUserWithEmailAndPassword(auth, email, pw);
+          await sendEmailVerification(cred.user);
+          console.log('Registrierung erfolgreich, Verifizierungs-Email gesendet');
+        } else {
+          await signInWithEmailAndPassword(auth, email, pw);
+          console.log('Anmeldung erfolgreich');
         }
+          
       } catch(err) {
-        debugLog(`Auth-Fehler: ${err.code} - ${err.message}`);
         let errorMessage = 'Ein Fehler ist aufgetreten';
         
         switch (err.code) {
@@ -437,9 +409,7 @@
       if (!mail) return showError('Bitte E-Mail eingeben');
       
       try {
-        debugLog(`Passwort-Reset für: ${mail}`);
         await sendPasswordResetEmail(auth, mail);
-        debugLog('Passwort-Reset E-Mail gesendet ✓');
         
         errorDiv.style.background = '#d4edda';
         errorDiv.style.borderColor = '#c3e6cb';
@@ -453,25 +423,23 @@
           errorDiv.style.color = '';
         }, 5000);
       } catch(e) {
-        debugLog(`Passwort-Reset Fehler: ${e.code} - ${e.message}`);
         showError('Fehler beim Senden der Reset-Mail: ' + e.message);
       }
     };
 
-    // Auth-Status überwachen
+    // Auth-Status überwachen mit Verzögerung für ersten Check
+    let firstCheck = true;
     onAuthStateChanged(auth, user => {
       if (user) {
-        debugLog(`Benutzer angemeldet: ${user.email} (verifiziert: ${user.emailVerified})`);
-        location.href = 'dashboard.html';
-      } else {
-        debugLog('Kein Benutzer angemeldet');
+        console.log(`Benutzer angemeldet: ${user.email}`);
+        window.location.href = 'dashboard.html';
+      } else if (!firstCheck) {
+        console.log('Kein Benutzer angemeldet');
       }
+      firstCheck = false;
     });
 
-    debugLog('Alle Event-Listener registriert ✓');
-
   } catch (error) {
-    debugLog(`Initialisierungsfehler: ${error.message}`);
     console.error('Firebase Initialisierung fehlgeschlagen:', error);
     
     const errorDiv = document.getElementById('errorMessage');
