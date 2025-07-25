@@ -117,19 +117,33 @@
       font-size:0.875rem;text-align:center;
     }
 
+    /* Debug Info */
+    .debug-info {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      max-width: 300px;
+      word-break: break-all;
+    }
+
     @media (max-width: 768px) {
       .logo-container img {
-        height: 80px; /* Kleineres Logo auf Mobile */
+        height: 80px;
       }
       
       .panel {
-        max-width: 95%; /* Mehr Platz auf Mobile */
+        max-width: 95%;
         padding: 1rem 1.5rem;
         margin: 0 auto;
       }
       
       h2 {
-        font-size: 1.5rem; /* Kleinere Überschrift */
+        font-size: 1.5rem;
       }
       
       body {
@@ -193,18 +207,28 @@
     </div>
   </div>
 
+  <div id="debugInfo" class="debug-info hidden"></div>
+
   <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider,
     signInWithEmailAndPassword, createUserWithEmailAndPassword,
     sendPasswordResetEmail, onAuthStateChanged
-  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import {
-    initializeAppCheck, ReCaptchaEnterpriseProvider
-  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app-check.js";
+    initializeAppCheck, ReCaptchaV3Provider
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
 
-  // Deine echte Firebase-Konfig
+  // Debug-Funktion
+  const debugLog = (message) => {
+    console.log('🔥 Firebase Debug:', message);
+    const debugDiv = document.getElementById('debugInfo');
+    debugDiv.innerHTML += `${new Date().toLocaleTimeString()}: ${message}<br>`;
+    debugDiv.classList.remove('hidden');
+  };
+
+  // Firebase-Konfiguration
   const firebaseConfig = {
     apiKey: "AIzaSyDrbeHimI43xjAaw-PvxtZUDh0v3bZA4XQ",
     authDomain: "codegame-dev.firebaseapp.com",
@@ -215,20 +239,32 @@
     measurementId: "G-R3X0TKGNZV"
   };
 
-  // Firebase App initialisieren
-  const app = initializeApp(firebaseConfig);
+  try {
+    debugLog('Initialisiere Firebase App...');
+    
+    // Firebase App initialisieren
+    const app = initializeApp(firebaseConfig);
+    debugLog('Firebase App initialisiert ✓');
 
-  //  App Check aktivieren (mit deinem echten Site Key)
-  initializeAppCheck(app, {
-    provider: new ReCaptchaEnterpriseProvider('6LcMLY4rAAAAAJwnajZRtnOfjRij7lJGDKMoztZN'),
-    isTokenAutoRefreshEnabled: true
-  });
+    // ERST App Check und reCAPTCHA initialisieren
+    debugLog('Initialisiere App Check und reCAPTCHA...');
+    
+    const appCheck = initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider('6LcMLY4rAAAAAJwnajZRtnOfjRij7lJGDKMoztZN'),
+      isTokenAutoRefreshEnabled: true
+    });
 
-  //  Auth Provider konfigurieren
-  const auth = getAuth(app);
-  const googleProvider = new GoogleAuthProvider();
-  const githubProvider = new GithubAuthProvider();
+    debugLog('App Check und reCAPTCHA initialisiert ✓');
 
+    // DANN Auth Provider konfigurieren
+    debugLog('Initialisiere Auth nach App Check...');
+    const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
+    const githubProvider = new GithubAuthProvider();
+
+    debugLog('Auth Provider nach App Check konfiguriert ✓');
+
+    debugLog('Auth Provider konfiguriert ✓');
 
     // UI Elements
     const errorDiv = document.getElementById('errorMessage');
@@ -238,6 +274,7 @@
 
     // Error handling
     const showError = (message) => {
+      debugLog(`Fehler: ${message}`);
       errorDiv.textContent = message;
       errorDiv.classList.remove('hidden');
       setTimeout(() => errorDiv.classList.add('hidden'), 5000);
@@ -280,9 +317,58 @@
 
     updUI();
 
-    // Social Login
-    document.getElementById('googleLogin').onclick = () => signInWithPopup(auth, googleProvider).catch(e => showError('Google-Anmeldung fehlgeschlagen: ' + e.message));
-    document.getElementById('githubLogin').onclick = () => signInWithPopup(auth, githubProvider).catch(e => showError('GitHub-Anmeldung fehlgeschlagen: ' + e.message));
+    // Social Login mit besserer Fehlerbehandlung
+    document.getElementById('googleLogin').onclick = async () => {
+      try {
+        debugLog('Google-Anmeldung gestartet...');
+        const result = await signInWithPopup(auth, googleProvider);
+        debugLog('Google-Anmeldung erfolgreich ✓');
+      } catch (error) {
+        debugLog(`Google-Anmeldung Fehler: ${error.code} - ${error.message}`);
+        let errorMessage = 'Google-Anmeldung fehlgeschlagen';
+        
+        switch (error.code) {
+          case 'auth/popup-closed-by-user':
+            errorMessage = 'Anmeldung wurde abgebrochen';
+            break;
+          case 'auth/popup-blocked':
+            errorMessage = 'Popup wurde blockiert. Bitte erlauben Sie Popups.';
+            break;
+          case 'auth/cancelled-popup-request':
+            errorMessage = 'Anmeldung wurde abgebrochen';
+            break;
+          default:
+            errorMessage = `Google-Anmeldung fehlgeschlagen: ${error.message}`;
+        }
+        showError(errorMessage);
+      }
+    };
+
+    document.getElementById('githubLogin').onclick = async () => {
+      try {
+        debugLog('GitHub-Anmeldung gestartet...');
+        const result = await signInWithPopup(auth, githubProvider);
+        debugLog('GitHub-Anmeldung erfolgreich ✓');
+      } catch (error) {
+        debugLog(`GitHub-Anmeldung Fehler: ${error.code} - ${error.message}`);
+        let errorMessage = 'GitHub-Anmeldung fehlgeschlagen';
+        
+        switch (error.code) {
+          case 'auth/popup-closed-by-user':
+            errorMessage = 'Anmeldung wurde abgebrochen';
+            break;
+          case 'auth/popup-blocked':
+            errorMessage = 'Popup wurde blockiert. Bitte erlauben Sie Popups.';
+            break;
+          case 'auth/cancelled-popup-request':
+            errorMessage = 'Anmeldung wurde abgebrochen';
+            break;
+          default:
+            errorMessage = `GitHub-Anmeldung fehlgeschlagen: ${error.message}`;
+        }
+        showError(errorMessage);
+      }
+    };
 
     // E-Mail/Passwort Auth
     document.getElementById('authForm').onsubmit = async e => {
@@ -298,24 +384,46 @@
       try {
         hideError();
         setLoading(true);
+        debugLog(`${isSignup ? 'Registrierung' : 'Anmeldung'} gestartet für: ${email}`);
         
         let cred = isSignup
           ? await createUserWithEmailAndPassword(auth, email, pw)
           : await signInWithEmailAndPassword(auth, email, pw);
           
+        debugLog(`${isSignup ? 'Registrierung' : 'Anmeldung'} erfolgreich ✓`);
+          
         if (isSignup) {
+          debugLog('Sende Verifizierungs-E-Mail...');
           await cred.user.sendEmailVerification();
+          debugLog('Verifizierungs-E-Mail gesendet ✓');
         }
       } catch(err) {
+        debugLog(`Auth-Fehler: ${err.code} - ${err.message}`);
         let errorMessage = 'Ein Fehler ist aufgetreten';
+        
         switch (err.code) {
-          case 'auth/email-already-in-use': errorMessage = 'Diese E-Mail wird bereits verwendet'; break;
-          case 'auth/weak-password': errorMessage = 'Das Passwort ist zu schwach'; break;
+          case 'auth/email-already-in-use': 
+            errorMessage = 'Diese E-Mail wird bereits verwendet'; 
+            break;
+          case 'auth/weak-password': 
+            errorMessage = 'Das Passwort ist zu schwach (mindestens 6 Zeichen)'; 
+            break;
           case 'auth/user-not-found':
-          case 'auth/wrong-password': errorMessage = 'Ungültige E-Mail oder Passwort'; break;
-          case 'auth/invalid-email': errorMessage = 'Ungültige E-Mail-Adresse'; break;
-          case 'auth/too-many-requests': errorMessage = 'Zu viele Versuche. Bitte später erneut versuchen.'; break;
-          default: errorMessage = err.message;
+          case 'auth/wrong-password': 
+          case 'auth/invalid-credential':
+            errorMessage = 'Ungültige E-Mail oder Passwort'; 
+            break;
+          case 'auth/invalid-email': 
+            errorMessage = 'Ungültige E-Mail-Adresse'; 
+            break;
+          case 'auth/too-many-requests': 
+            errorMessage = 'Zu viele Versuche. Bitte später erneut versuchen.'; 
+            break;
+          case 'auth/network-request-failed':
+            errorMessage = 'Netzwerkfehler. Bitte Internetverbindung prüfen.';
+            break;
+          default: 
+            errorMessage = `Fehler: ${err.message}`;
         }
         showError(errorMessage);
       } finally {
@@ -343,7 +451,10 @@
       if (!mail) return showError('Bitte E-Mail eingeben');
       
       try {
+        debugLog(`Passwort-Reset für: ${mail}`);
         await sendPasswordResetEmail(auth, mail);
+        debugLog('Passwort-Reset E-Mail gesendet ✓');
+        
         errorDiv.style.background = '#d4edda';
         errorDiv.style.borderColor = '#c3e6cb';
         errorDiv.style.color = '#155724';
@@ -356,16 +467,31 @@
           errorDiv.style.color = '';
         }, 5000);
       } catch(e) {
-        showError('Fehler: ' + e.message);
+        debugLog(`Passwort-Reset Fehler: ${e.code} - ${e.message}`);
+        showError('Fehler beim Senden der Reset-Mail: ' + e.message);
       }
     };
 
     // Auth-Status überwachen
     onAuthStateChanged(auth, user => {
       if (user) {
+        debugLog(`Benutzer angemeldet: ${user.email} (verifiziert: ${user.emailVerified})`);
         location.href = 'dashboard.html';
+      } else {
+        debugLog('Kein Benutzer angemeldet');
       }
     });
+
+    debugLog('Alle Event-Listener registriert ✓');
+
+  } catch (error) {
+    debugLog(`Initialisierungsfehler: ${error.message}`);
+    console.error('Firebase Initialisierung fehlgeschlagen:', error);
+    
+    const errorDiv = document.getElementById('errorMessage');
+    errorDiv.textContent = 'Firebase konnte nicht initialisiert werden. Bitte laden Sie die Seite neu.';
+    errorDiv.classList.remove('hidden');
+  }
   </script>
 </body>
 </html>
