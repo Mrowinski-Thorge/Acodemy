@@ -117,19 +117,7 @@
       font-size:0.875rem;text-align:center;
     }
 
-    /* Debug Info */
-    .debug-info {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.8);
-      color: white;
-      padding: 10px;
-      border-radius: 5px;
-      font-size: 12px;
-      max-width: 300px;
-      word-break: break-all;
-    }
+
 
     @media (max-width: 768px) {
       .logo-container img {
@@ -207,7 +195,7 @@
     </div>
   </div>
 
-  <div id="debugInfo" class="debug-info hidden"></div>
+  <div id="debugInfo" class="hidden"></div>
 
   <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -220,12 +208,10 @@
     initializeAppCheck, ReCaptchaV3Provider
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
 
-  // Debug-Funktion
+  // Debug-Funktion (deaktiviert)
   const debugLog = (message) => {
     console.log('🔥 Firebase Debug:', message);
-    const debugDiv = document.getElementById('debugInfo');
-    debugDiv.innerHTML += `${new Date().toLocaleTimeString()}: ${message}<br>`;
-    debugDiv.classList.remove('hidden');
+    // Debug-Panel entfernt
   };
 
   // Firebase-Konfiguration
