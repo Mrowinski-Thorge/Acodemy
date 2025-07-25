@@ -119,17 +119,17 @@
 
     @media (max-width: 768px) {
       .logo-container img {
-        height: 80px;
+        height: 80px; /* Kleineres Logo auf Mobile */
       }
       
       .panel {
-        max-width: 95%;
+        max-width: 95%; /* Mehr Platz auf Mobile */
         padding: 1rem 1.5rem;
         margin: 0 auto;
       }
       
       h2 {
-        font-size: 1.5rem;
+        font-size: 1.5rem; /* Kleinere Überschrift */
       }
       
       body {
@@ -194,17 +194,17 @@
   </div>
 
   <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
   import {
     getAuth, signInWithPopup, GoogleAuthProvider, GithubAuthProvider,
     signInWithEmailAndPassword, createUserWithEmailAndPassword,
-    sendPasswordResetEmail, onAuthStateChanged, sendEmailVerification
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    sendPasswordResetEmail, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
   import {
-    initializeAppCheck, ReCaptchaV3Provider
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
+    initializeAppCheck, ReCaptchaEnterpriseProvider
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app-check.js";
 
-  // Firebase-Konfiguration
+  // Deine echte Firebase-Konfig
   const firebaseConfig = {
     apiKey: "AIzaSyDrbeHimI43xjAaw-PvxtZUDh0v3bZA4XQ",
     authDomain: "codegame-dev.firebaseapp.com",
@@ -217,29 +217,18 @@
 
   // Firebase App initialisieren
   const app = initializeApp(firebaseConfig);
-  console.log('Firebase App initialisiert ✓');
 
-  // WICHTIG: App Check ZUERST initialisieren (VOR Auth!)
-  try {
-    const appCheck = initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider('6LcMLY4rAAAAAJwnajZRtnOfjRij7lJGDKMoztZN'),
-      isTokenAutoRefreshEnabled: true
-    });
-    console.log('App Check initialisiert ✓');
-  } catch (error) {
-    console.error('App Check Fehler:', error);
-  }
+  //  App Check aktivieren (mit deinem echten Site Key)
+  initializeAppCheck(app, {
+    provider: new ReCaptchaEnterpriseProvider('6LcMLY4rAAAAAJwnajZRtnOfjRij7lJGDKMoztZN'),
+    isTokenAutoRefreshEnabled: true
+  });
 
-  // Kleine Verzögerung um sicherzustellen dass App Check bereit ist
-  await new Promise(resolve => setTimeout(resolve, 100));
-
-  // DANN Auth initialisieren
+  //  Auth Provider konfigurieren
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
   const githubProvider = new GithubAuthProvider();
-  console.log('Auth Provider konfiguriert ✓');
 
-  try {
 
     // UI Elements
     const errorDiv = document.getElementById('errorMessage');
@@ -292,53 +281,8 @@
     updUI();
 
     // Social Login
-    document.getElementById('googleLogin').onclick = async () => {
-      try {
-        const result = await signInWithPopup(auth, googleProvider);
-        console.log('Google-Anmeldung erfolgreich');
-      } catch (error) {
-        let errorMessage = 'Google-Anmeldung fehlgeschlagen';
-        
-        switch (error.code) {
-          case 'auth/popup-closed-by-user':
-            errorMessage = 'Anmeldung wurde abgebrochen';
-            break;
-          case 'auth/popup-blocked':
-            errorMessage = 'Popup wurde blockiert. Bitte erlauben Sie Popups.';
-            break;
-          case 'auth/cancelled-popup-request':
-            errorMessage = 'Anmeldung wurde abgebrochen';
-            break;
-          default:
-            errorMessage = `Google-Anmeldung fehlgeschlagen: ${error.message}`;
-        }
-        showError(errorMessage);
-      }
-    };
-
-    document.getElementById('githubLogin').onclick = async () => {
-      try {
-        const result = await signInWithPopup(auth, githubProvider);
-        console.log('GitHub-Anmeldung erfolgreich');
-      } catch (error) {
-        let errorMessage = 'GitHub-Anmeldung fehlgeschlagen';
-        
-        switch (error.code) {
-          case 'auth/popup-closed-by-user':
-            errorMessage = 'Anmeldung wurde abgebrochen';
-            break;
-          case 'auth/popup-blocked':
-            errorMessage = 'Popup wurde blockiert. Bitte erlauben Sie Popups.';
-            break;
-          case 'auth/cancelled-popup-request':
-            errorMessage = 'Anmeldung wurde abgebrochen';
-            break;
-          default:
-            errorMessage = `GitHub-Anmeldung fehlgeschlagen: ${error.message}`;
-        }
-        showError(errorMessage);
-      }
-    };
+    document.getElementById('googleLogin').onclick = () => signInWithPopup(auth, googleProvider).catch(e => showError('Google-Anmeldung fehlgeschlagen: ' + e.message));
+    document.getElementById('githubLogin').onclick = () => signInWithPopup(auth, githubProvider).catch(e => showError('GitHub-Anmeldung fehlgeschlagen: ' + e.message));
 
     // E-Mail/Passwort Auth
     document.getElementById('authForm').onsubmit = async e => {
@@ -355,41 +299,23 @@
         hideError();
         setLoading(true);
         
-        if (isSignup) {
-          const cred = await createUserWithEmailAndPassword(auth, email, pw);
-          await sendEmailVerification(cred.user);
-          console.log('Registrierung erfolgreich, Verifizierungs-Email gesendet');
-        } else {
-          await signInWithEmailAndPassword(auth, email, pw);
-          console.log('Anmeldung erfolgreich');
-        }
+        let cred = isSignup
+          ? await createUserWithEmailAndPassword(auth, email, pw)
+          : await signInWithEmailAndPassword(auth, email, pw);
           
+        if (isSignup) {
+          await cred.user.sendEmailVerification();
+        }
       } catch(err) {
         let errorMessage = 'Ein Fehler ist aufgetreten';
-        
         switch (err.code) {
-          case 'auth/email-already-in-use': 
-            errorMessage = 'Diese E-Mail wird bereits verwendet'; 
-            break;
-          case 'auth/weak-password': 
-            errorMessage = 'Das Passwort ist zu schwach (mindestens 6 Zeichen)'; 
-            break;
+          case 'auth/email-already-in-use': errorMessage = 'Diese E-Mail wird bereits verwendet'; break;
+          case 'auth/weak-password': errorMessage = 'Das Passwort ist zu schwach'; break;
           case 'auth/user-not-found':
-          case 'auth/wrong-password': 
-          case 'auth/invalid-credential':
-            errorMessage = 'Ungültige E-Mail oder Passwort'; 
-            break;
-          case 'auth/invalid-email': 
-            errorMessage = 'Ungültige E-Mail-Adresse'; 
-            break;
-          case 'auth/too-many-requests': 
-            errorMessage = 'Zu viele Versuche. Bitte später erneut versuchen.'; 
-            break;
-          case 'auth/network-request-failed':
-            errorMessage = 'Netzwerkfehler. Bitte Internetverbindung prüfen.';
-            break;
-          default: 
-            errorMessage = `Fehler: ${err.message}`;
+          case 'auth/wrong-password': errorMessage = 'Ungültige E-Mail oder Passwort'; break;
+          case 'auth/invalid-email': errorMessage = 'Ungültige E-Mail-Adresse'; break;
+          case 'auth/too-many-requests': errorMessage = 'Zu viele Versuche. Bitte später erneut versuchen.'; break;
+          default: errorMessage = err.message;
         }
         showError(errorMessage);
       } finally {
@@ -418,7 +344,6 @@
       
       try {
         await sendPasswordResetEmail(auth, mail);
-        
         errorDiv.style.background = '#d4edda';
         errorDiv.style.borderColor = '#c3e6cb';
         errorDiv.style.color = '#155724';
@@ -431,29 +356,16 @@
           errorDiv.style.color = '';
         }, 5000);
       } catch(e) {
-        showError('Fehler beim Senden der Reset-Mail: ' + e.message);
+        showError('Fehler: ' + e.message);
       }
     };
 
-    // Auth-Status überwachen mit Verzögerung für ersten Check
-    let firstCheck = true;
+    // Auth-Status überwachen
     onAuthStateChanged(auth, user => {
       if (user) {
-        console.log(`Benutzer angemeldet: ${user.email}`);
-        window.location.href = 'dashboard.html';
-      } else if (!firstCheck) {
-        console.log('Kein Benutzer angemeldet');
+        location.href = 'dashboard.html';
       }
-      firstCheck = false;
     });
-
-  } catch (error) {
-    console.error('Firebase Initialisierung fehlgeschlagen:', error);
-    
-    const errorDiv = document.getElementById('errorMessage');
-    errorDiv.textContent = 'Firebase konnte nicht initialisiert werden. Bitte laden Sie die Seite neu.';
-    errorDiv.classList.remove('hidden');
-  }
   </script>
 </body>
 </html>
