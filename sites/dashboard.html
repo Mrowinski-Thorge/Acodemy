@@ -49,38 +49,6 @@
 
     .hidden { display: none !important; }
 
-    /* Loading Screen */
-    .loading-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: var(--bg-secondary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-
-    .loading-content {
-      text-align: center;
-    }
-
-    .loading-spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid var(--border);
-      border-radius: 50%;
-      border-top-color: var(--accent);
-      animation: spin 1s linear infinite;
-      margin: 0 auto 1rem;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
     .panel {
       max-width: 400px;
       width: 90%;
@@ -274,6 +242,10 @@
       margin-left: 0.5rem;
     }
 
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     /* Error/Success Messages */
     .message {
       padding: 0.75rem;
@@ -389,14 +361,6 @@
   </style>
 </head>
 <body>
-  <!-- Loading Screen -->
-  <div id="loadingScreen" class="loading-screen">
-    <div class="loading-content">
-      <div class="loading-spinner"></div>
-      <p style="color: var(--text-secondary);">Laden...</p>
-    </div>
-  </div>
-
   <!-- E-Mail-Verifikations-Overlay -->
   <div id="verificationOverlay">
     <span id="overlayText">Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)</span>
@@ -415,7 +379,7 @@
     </div>
   </div>
 
-  <div id="mainScreen" class="panel hidden">
+  <div id="mainScreen" class="panel">
     <div class="logo-container">
       <img src="../assets/images/logo.png" alt="Acodemy Logo" onerror="this.style.display='none'">
     </div>
@@ -468,8 +432,11 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { 
       getAuth, onAuthStateChanged, signOut, updateEmail, updatePassword,
-      sendEmailVerification, reload, setPersistence, browserLocalPersistence
+      sendEmailVerification, reload
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { 
+      initializeAppCheck, ReCaptchaV3Provider 
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
 
     // Firebase-Konfig
     const firebaseConfig = {
@@ -484,20 +451,17 @@
     
     // Firebase initialisieren
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
     
-    // Set persistence to LOCAL to maintain session
-    setPersistence(auth, browserLocalPersistence)
-      .then(() => {
-        console.log('Persistence set to LOCAL');
-      })
-      .catch((error) => {
-        console.error('Error setting persistence:', error);
-      });
+    // App Check ZUERST initialisieren
+    const appCheck = initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider('6LfxOjwqAAAAAP60gJcFNhpwcSLWK7M0YGyS6A8G'),
+      isTokenAutoRefreshEnabled: true
+    });
+    
+    // DANN erst Auth initialisieren
+    const auth = getAuth(app);
 
     // UI Elements
-    const loadingScreen = document.getElementById('loadingScreen');
-    const mainScreen = document.getElementById('mainScreen');
     const overlay = document.getElementById('verificationOverlay');
     const overlayText = document.getElementById('overlayText');
     const overlayLoading = document.getElementById('overlayLoading');
@@ -508,9 +472,7 @@
     let lastVerificationStatus = null;
     let verificationChecker = null;
     let hasEmailBeenSent = false;
-    let isLoggingOut = false; // Flag to prevent redirect during logout
-    let authInitialized = false; // Track if auth has been initialized
-    let authTimeout = null; // Timeout for auth check
+    let firstAuthCheck = true;  // NEU: Flag für ersten Auth-Check
 
     // Message functions
     const showMessage = (text, type = 'error') => {
@@ -549,7 +511,7 @@
       
       // Show overlay for all non-verified users
       if (!isVerified) {
-        showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum Senden)');
+        showOverlay('Bitte verifiziere deine E-Mail-Adresse (Klicken zum erneut senden)');
       } else {
         hideOverlay();
       }
@@ -591,41 +553,33 @@
 
     // Auth state change handler
     onAuthStateChanged(auth, async (user) => {
-      console.log('Auth state changed:', user ? user.email : 'No user', 'authInitialized:', authInitialized);
+      console.log('Auth state changed:', user ? user.email : 'No user');
       
-      // Clear any existing timeout
-      if (authTimeout) {
-        clearTimeout(authTimeout);
-        authTimeout = null;
-      }
-      
-      if (!user) {
-        // Wait a bit on first load to ensure auth is properly initialized
-        if (!authInitialized) {
-          console.log('First auth check - waiting for initialization...');
-          authTimeout = setTimeout(() => {
-            // If still no user after timeout, redirect to login
-            if (!auth.currentUser && !isLoggingOut) {
-              console.log('No user after timeout - redirecting to login');
-              window.location.href = 'login.html';
-            }
-          }, 2000); // Wait 2 seconds for auth to initialize
-          authInitialized = true;
-          return;
-        }
+      // NEU: Beim ersten Check nichts tun wenn kein User da ist
+      if (firstAuthCheck && !user) {
+        firstAuthCheck = false;
+        console.log('First check - no user yet, waiting...');
         
-        // Only redirect if we're not in the middle of logging out
-        if (!isLoggingOut) {
-          console.log('No user and not logging out - redirecting to login...');
-          window.location.href = 'login.html';
-        }
+        // Nach kurzer Zeit nochmal prüfen
+        setTimeout(() => {
+          if (!auth.currentUser) {
+            console.log('Still no user after timeout - redirecting to login');
+            window.location.href = 'login.html';
+          }
+        }, 1500);
         return;
       }
       
-      // User is authenticated - show the dashboard
-      console.log('User authenticated:', user.email);
-      authInitialized = true;
+      firstAuthCheck = false;
       
+      if (!user) {
+        // Not authenticated - redirect to login
+        console.log('Redirecting to login...');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // User is authenticated
       try {
         await reload(user);
         updateUserStatus(auth.currentUser);
@@ -641,10 +595,6 @@
           startVerificationChecker();
         }
       }
-      
-      // Hide loading screen and show main screen
-      loadingScreen.classList.add('hidden');
-      mainScreen.classList.remove('hidden');
     });
 
     // Overlay click handler - Send verification email
@@ -681,13 +631,9 @@
     document.getElementById('mobileLogoutBtn').onclick = async () => {
       try {
         console.log('Mobile logout clicked');
-        isLoggingOut = true;
         await signOut(auth);
-        // Manual redirect after successful logout
-        window.location.href = 'login.html';
       } catch (error) {
         console.error('Mobile logout error:', error);
-        isLoggingOut = false;
       }
     };
 
@@ -695,13 +641,9 @@
     document.getElementById('logoutBtn').onclick = async () => {
       try {
         console.log('Logout clicked');
-        isLoggingOut = true;
         await signOut(auth);
-        // Manual redirect after successful logout
-        window.location.href = 'login.html';
       } catch (error) {
         console.error('Logout error:', error);
-        isLoggingOut = false;
         showMessage('Fehler beim Ausloggen: ' + error.message);
       }
     };
@@ -824,18 +766,6 @@
     };
 
     console.log('Dashboard script loaded successfully');
-    
-    // Additional check after page load
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        console.log('Page load check - currentUser:', auth.currentUser);
-        if (!auth.currentUser && !loadingScreen.classList.contains('hidden')) {
-          // If still showing loading screen and no user, redirect
-          console.log('No user found after page load - redirecting');
-          window.location.href = 'login.html';
-        }
-      }, 3000); // Final check after 3 seconds
-    });
   </script>
 </body>
 </html>
