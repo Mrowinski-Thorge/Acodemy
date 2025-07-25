@@ -468,7 +468,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { 
       getAuth, onAuthStateChanged, signOut, updateEmail, updatePassword,
-      sendEmailVerification, reload
+      sendEmailVerification, reload, setPersistence, browserLocalPersistence
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     // Firebase-Konfig
@@ -485,6 +485,15 @@
     // Firebase initialisieren
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    
+    // Set persistence to LOCAL to maintain session
+    setPersistence(auth, browserLocalPersistence)
+      .then(() => {
+        console.log('Persistence set to LOCAL');
+      })
+      .catch((error) => {
+        console.error('Error setting persistence:', error);
+      });
 
     // UI Elements
     const loadingScreen = document.getElementById('loadingScreen');
@@ -500,6 +509,8 @@
     let verificationChecker = null;
     let hasEmailBeenSent = false;
     let isLoggingOut = false; // Flag to prevent redirect during logout
+    let authInitialized = false; // Track if auth has been initialized
+    let authTimeout = null; // Timeout for auth check
 
     // Message functions
     const showMessage = (text, type = 'error') => {
@@ -580,9 +591,29 @@
 
     // Auth state change handler
     onAuthStateChanged(auth, async (user) => {
-      console.log('Auth state changed:', user ? user.email : 'No user');
+      console.log('Auth state changed:', user ? user.email : 'No user', 'authInitialized:', authInitialized);
+      
+      // Clear any existing timeout
+      if (authTimeout) {
+        clearTimeout(authTimeout);
+        authTimeout = null;
+      }
       
       if (!user) {
+        // Wait a bit on first load to ensure auth is properly initialized
+        if (!authInitialized) {
+          console.log('First auth check - waiting for initialization...');
+          authTimeout = setTimeout(() => {
+            // If still no user after timeout, redirect to login
+            if (!auth.currentUser && !isLoggingOut) {
+              console.log('No user after timeout - redirecting to login');
+              window.location.href = 'login.html';
+            }
+          }, 2000); // Wait 2 seconds for auth to initialize
+          authInitialized = true;
+          return;
+        }
+        
         // Only redirect if we're not in the middle of logging out
         if (!isLoggingOut) {
           console.log('No user and not logging out - redirecting to login...');
@@ -593,6 +624,7 @@
       
       // User is authenticated - show the dashboard
       console.log('User authenticated:', user.email);
+      authInitialized = true;
       
       try {
         await reload(user);
@@ -792,6 +824,18 @@
     };
 
     console.log('Dashboard script loaded successfully');
+    
+    // Additional check after page load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        console.log('Page load check - currentUser:', auth.currentUser);
+        if (!auth.currentUser && !loadingScreen.classList.contains('hidden')) {
+          // If still showing loading screen and no user, redirect
+          console.log('No user found after page load - redirecting');
+          window.location.href = 'login.html';
+        }
+      }, 3000); // Final check after 3 seconds
+    });
   </script>
 </body>
 </html>
